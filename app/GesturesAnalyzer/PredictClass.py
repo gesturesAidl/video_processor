@@ -5,10 +5,7 @@ from app.GesturesAnalyzer.Classifier2stream import ClassifierTwoStream
 class PredictClass:
 
     def __init__(self):
-        pass
 
-    def prediction(self, rgb_feat, flow_feat):
-        
         device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
         # Load model 
@@ -20,6 +17,8 @@ class PredictClass:
         trained_model.load_state_dict(checkpoint['model_state_dict'])
         trained_model.eval()
 
+    def prediction(self, rgb_feat, flow_feat):
+        
         # Predict class from features
         with torch.no_grad():
             rgb_feat = rgb_feat.to(device)

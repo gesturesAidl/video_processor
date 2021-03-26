@@ -11,6 +11,7 @@ class GesturesAnalyzer:
     def __init__(self):
         self.feature_extractor = FeatureExtractor()
         self.optical_flow_extractor = OpticalFlowExtractor()
+        self.predict_class = PredictClass()
 
     def process_video(self, video):
         try:
@@ -36,7 +37,7 @@ class GesturesAnalyzer:
         most likely class of the video.
         Set results as a Gestures object
         """
-        pred_class = PredictClass.prediction(features, optical_flow)
+        pred_class = self.predict_class.prediction(features, optical_flow)
 
         # TODO: pass from pred_class to Gestures(). Agree on what's the best data to return as Gestures (all class probabilities or best class)
 
