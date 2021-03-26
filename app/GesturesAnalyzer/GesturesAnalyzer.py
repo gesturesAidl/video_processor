@@ -2,6 +2,7 @@ import threading
 
 from app.GesturesAnalyzer.FeatureExtractor import FeatureExtractor
 from app.GesturesAnalyzer.OpticalFlowExtractor import OpticalFlowExtractor
+from app.GesturesAnalyzer.PredictClass import PredictClass
 from app.domain.Gestures import Gestures
 
 
@@ -35,6 +36,9 @@ class GesturesAnalyzer:
         most likely class of the video.
         Set results as a Gestures object
         """
+        pred_class = PredictClass.prediction(features, optical_flow)
+
+        # TODO: pass from pred_class to Gestures(). Agree on what's the best data to return as Gestures (all class probabilities or best class)
 
         return Gestures()
 
