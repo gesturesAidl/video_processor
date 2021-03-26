@@ -6,3 +6,4 @@ dependencies:
   - opencv
   - python-dotenv
   - pika
+  - torch
