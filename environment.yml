@@ -1,8 +1,11 @@
 name: videoprocessor
 channels:
   - conda-forge
+  - pytorch
 dependencies:
   - python=3.7.6
   - opencv
   - python-dotenv
   - pika
+  - pytorch>=1.7.0
+  - numpy

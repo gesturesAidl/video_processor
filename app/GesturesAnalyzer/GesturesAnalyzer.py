@@ -5,6 +5,7 @@ import os
 
 from app.GesturesAnalyzer.FeatureExtractor import FeatureExtractor
 from app.GesturesAnalyzer.OpticalFlowExtractor import OpticalFlowExtractor
+from app.GesturesAnalyzer.PredictClass import PredictClass
 from app.domain.Gestures import Gestures
 
 
@@ -13,11 +14,13 @@ class GesturesAnalyzer:
     def __init__(self):
         self.feature_extractor = FeatureExtractor()
         self.optical_flow_extractor = OpticalFlowExtractor()
+        self.predict_class = PredictClass()
         self.count = 0
         self.last_clip = None
         self.frameSize = (170, 100)
         self.fps = 12
         self.video_writer = cv2.VideoWriter_fourcc(*'XVID')
+
 
     def process_video(self, video):
         try:
@@ -43,6 +46,9 @@ class GesturesAnalyzer:
         most likely class of the video.
         Set results as a Gestures object
         """
+
+        pred_class = self.predict_class.prediction(features, optical_flow)
+        # TODO: pass from pred_class to Gestures(). Agree on what's the best data to return as Gestures (all class probabilities or best class)
 
         return Gestures()
 

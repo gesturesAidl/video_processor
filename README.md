@@ -47,6 +47,8 @@ Copy the following code to your .env file and set the fields with your rabbitmq 
     RABBIT_HOST="..."
     RABBIT_PORT="..."
     VIDEOS_OUT_PATH="..."
+    MODEL_DIR="..."
+    
 
 ### Set the working directory of your app
 In your app/app.py file, replace the {abs_path_to_your_project} variable in the 'workdir' var assignment to your absolute path to the project. 

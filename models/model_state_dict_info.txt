@@ -1,0 +1,2 @@
+model_state_dict_0.8311868
+state_dict_80_0.8311868_OneCycleLR_dropout0.5
