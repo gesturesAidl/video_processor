@@ -42,3 +42,8 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Environment variables
+/env
+.env
+
+/output_videos

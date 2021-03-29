@@ -3,7 +3,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import sys
 
-workdir = '/home/csantos/src/aidl/video_processor'
+workdir = '{abs_path_to_your_project}' + '/video_processor'
 sys.path.insert(0, workdir)
 
 from app.config.RabbitTemplate import RabbitTemplate
@@ -21,6 +21,7 @@ if __name__ == '__main__':
     # Create RPC Controller and start consumer
     rabbit_template = RabbitTemplate()
     controller = Controller(rabbit_template)
-    controller.start()
+    controller.init()
+
     print(" [X] Start Consuming: ")
     rabbit_template.channel.start_consuming()

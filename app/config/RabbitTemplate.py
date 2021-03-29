@@ -21,10 +21,9 @@ class RabbitTemplate:
 
         # Declare RPC
         self.channel.queue_declare(queue=RabbitConstants.RPC_REQUEST_QUEUE)
-        self.channel.exchange_declare(exchange=RabbitConstants.RPC_DIRECT_EXCHANGE,
-                                      exchange_type='direct', durable=True)
-        self.channel.queue_bind(exchange=RabbitConstants.RPC_DIRECT_EXCHANGE,
-                                queue=RabbitConstants.RPC_REQUEST_QUEUE,
+        self.channel.exchange_declare(RabbitConstants.RPC_DIRECT_EXCHANGE, exchange_type='direct')
+        self.channel.queue_bind(queue=RabbitConstants.RPC_REQUEST_QUEUE,
+                                exchange=RabbitConstants.RPC_DIRECT_EXCHANGE,
                                 routing_key=RabbitConstants.RPC_REQ_ROUTING_KEY)
 
     # .env vars
@@ -43,5 +42,5 @@ class RabbitTemplate:
         ch.basic_publish(exchange='',
                          routing_key=props.reply_to,
                          properties=pika.BasicProperties(correlation_id=props.correlation_id),
-                         body=json.dumps(body))
+                         body=json.dumps(body.__dict__))
         ch.basic_ack(delivery_tag=method.delivery_tag)

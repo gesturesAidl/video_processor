@@ -1,4 +1,7 @@
 import threading
+import numpy as np
+import cv2
+import os
 
 from app.GesturesAnalyzer.FeatureExtractor import FeatureExtractor
 from app.GesturesAnalyzer.OpticalFlowExtractor import OpticalFlowExtractor
@@ -10,6 +13,11 @@ class GesturesAnalyzer:
     def __init__(self):
         self.feature_extractor = FeatureExtractor()
         self.optical_flow_extractor = OpticalFlowExtractor()
+        self.count = 0
+        self.last_clip = None
+        self.frameSize = (170, 100)
+        self.fps = 12
+        self.video_writer = cv2.VideoWriter_fourcc(*'XVID')
 
     def process_video(self, video):
         try:
@@ -38,3 +46,17 @@ class GesturesAnalyzer:
 
         return Gestures()
 
+    def save_video(self, frames):
+        self.count = self.count+1
+        video_name = str(self.count) + '.avi'
+        path = os.getenv('VIDEOS_OUT_PATH')
+
+        if self.last_clip:
+            video = self.last_clip + frames
+            video_out = cv2.VideoWriter(path+video_name, self.video_writer, self.fps, self.frameSize)
+            for frame in video:
+                video_out.write(np.array(frame, dtype='uint8'))
+            video_out.release()
+
+        self.last_clip = frames
+        return Gestures()
