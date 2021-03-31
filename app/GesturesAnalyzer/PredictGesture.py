@@ -14,7 +14,7 @@ class PredictGesture:
         self.trained_model = ClassifierTwoStream().to(self.device)
 
         # Load state_dict
-        model_state_file = os.getenv("MODELS_DIR") + '/model_state_dict.pt'
+        model_state_file = os.path.join(os.getenv("MODELS_DIR"), 'model_state_dict.pt')
         checkpoint = torch.load(model_state_file, map_location=self.device)
         self.trained_model.load_state_dict(checkpoint['model_state_dict'])
         self.trained_model.eval()
