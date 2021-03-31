@@ -4,7 +4,7 @@ import os
 from app.GesturesAnalyzer.Classifier2stream import ClassifierTwoStream
 
 
-class PredictClass:
+class PredictGesture:
 
     def __init__(self):
 
@@ -28,4 +28,4 @@ class PredictClass:
             output = self.trained_model(rgb_feat, flow_feat)
             pred_class = output.argmax(-1)
 
-        return pred_class
+        return pred_gesture

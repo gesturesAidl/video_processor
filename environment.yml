@@ -7,5 +7,5 @@ dependencies:
   - opencv
   - python-dotenv
   - pika
-  - pytorch>=1.7.0
+  - pytorch=1.7.0
   - numpy

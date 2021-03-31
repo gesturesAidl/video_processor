@@ -5,7 +5,7 @@ import os
 
 from app.GesturesAnalyzer.FeatureExtractor import FeatureExtractor
 from app.GesturesAnalyzer.OpticalFlowExtractor import OpticalFlowExtractor
-from app.GesturesAnalyzer.PredictClass import PredictClass
+from app.GesturesAnalyzer.PredictGesture import PredictGesture
 from app.domain.Gestures import Gestures
 
 
@@ -14,7 +14,7 @@ class GesturesAnalyzer:
     def __init__(self):
         self.feature_extractor = FeatureExtractor()
         self.optical_flow_extractor = OpticalFlowExtractor()
-        self.predict_class = PredictClass()
+        self.predict_gesture = PredictGesture()
         self.count = 0
         self.last_clip = None
         self.frameSize = (170, 100)
@@ -47,7 +47,7 @@ class GesturesAnalyzer:
         Set results as a Gestures object
         """
 
-        pred_class = self.predict_class.prediction(features, optical_flow)
+        pred_gesture = self.predict_gesture.prediction(features, optical_flow)
         # TODO: pass from pred_class to Gestures(). Agree on what's the best data to return as Gestures (all class probabilities or best class)
 
         return Gestures()
