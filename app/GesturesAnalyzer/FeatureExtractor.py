@@ -60,7 +60,7 @@ class FeatureExtractor():
                                                                 skip_offsets)
         clip_input = transform(clip_input)
         clip_input = np.stack(clip_input, axis=0)
-        clip_input = clip_input.reshape((-1,) + (opt.new_length, 3, opt.input_size, opt.input_size))
+        clip_input = clip_input.reshape((-1,) + (self.new_length, 3, self.input_size, self.input_size))
         clip_input = np.transpose(clip_input, (0, 2, 1, 3, 4))
 
         return nd.array(clip_input)
