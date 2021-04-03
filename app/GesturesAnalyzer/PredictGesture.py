@@ -26,6 +26,6 @@ class PredictGesture:
             rgb_feat = rgb_feat.to(self.device)
             flow_feat = flow_feat.to(self.device)
             output = self.trained_model(rgb_feat, flow_feat)
-            pred_class = output.argmax(-1)
+            pred_gesture = output.argmax(-1)
 
         return pred_gesture

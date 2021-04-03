@@ -40,17 +40,15 @@ class GesturesAnalyzer:
         except Exception as e:
             print(str(e))
 
-        """
-        ### TODO:
-        When both methods have finished, use results in {@features} and {@optical_flow} to pass through model to get the 
-        most likely class of the video.
-        Set results as a Gestures object
-        """
-
+        # When both methods have finished, use results in {@features} and {@optical_flow} to pass through
+        # model to get the most likely class of the video.
+        
         pred_gesture = self.predict_gesture.prediction(features, optical_flow)
-        # TODO: pass from pred_class to Gestures(). Agree on what's the best data to return as Gestures (all class probabilities or best class)
-
-        return Gestures()
+        
+        # Set results as a Gestures object
+        gesture = Gestures()
+        gesture.set_label(pred_gesture)
+        return gesture
 
     def save_video(self, frames):
         self.count = self.count+1
