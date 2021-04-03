@@ -48,7 +48,7 @@ class FeatureExtractor():
         self.transform_test = video.VideoGroupValTransform(size=self.input_size, mean=image_norm_mean, std=image_norm_std)
 
 
-    def read_data(self,video,transform,video_utils):
+    def read_data(self,video_name,transform,video_utils):
         decord = try_import_decord()
         decord_vr = decord.VideoReader(video_name, width=self.new_width, height=self.new_height)
         duration = len(decord_vr)
