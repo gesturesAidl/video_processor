@@ -12,12 +12,24 @@ from gluoncv.utils.filesystem import try_import_decord
 class FeatureExtractor:
 
     def __init__(self):
-        self.data_dir = '' # NEED TO COMPLETE
+        # The default values, as they were not changed during training
+        image_norm_mean = [0.485, 0.456, 0.406]
+        image_norm_std = [0.229, 0.224, 0.225]
         model = 'i3d_resnet50_v1_kinetics400'
         num_classes = 400
+
+        self.data_dir = '' # NEED TO COMPLETE
         self.dtype = 'float32'
         self.num_segments = 1
-        self.gpu_id = 1 # Number of GPUs.
+        self.gpu_id = -1 # gpu id, -1 for none 
+        self.input_size = 224 
+        self.new_length = 32
+        self.new_height = 256
+        self.new_width = 340
+        self.video_loader = True
+        self.use_decord = True
+        self.num_crop = 1
+        self.data_aug = 'v1'
         
         if self.gpu_id == -1:
             self.context = mx.cpu()
@@ -27,23 +39,9 @@ class FeatureExtractor:
 
         self.net = get_model(name=model, nclass=num_classes, pretrained=True,
                         feat_ext=True, num_segments=self.num_segments, num_crop=self.num_crop)
+        
         self.net.cast(self.dtype)
         self.net.collect_params().reset_ctx(self.context)
-
-        # The default values, as they were not changed during training
-        self.input_size = 224 
-        self.new_length = 32
-        self.new_height = 256
-        self.new_width = 340
-
-        self.video_loader = True
-        self.use_decord = True
-        self.num_crop = 1
-        self.data_aug = 'v1'
-
-        image_norm_mean = [0.485, 0.456, 0.406]
-        image_norm_std = [0.229, 0.224, 0.225]
-
         self.transform_test = video.VideoGroupValTransform(size=self.input_size, mean=image_norm_mean, std=image_norm_std)
 
     def read_data(self, video_name, transform, video_utils):
