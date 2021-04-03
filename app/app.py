@@ -2,12 +2,12 @@ import logging
 from pathlib import Path
 from dotenv import load_dotenv
 import sys
+import os
 
-workdir = '{abs_path_to_your_project}' + '/video_processor'
+workdir = os.getcwd()
+print(workdir)
 sys.path.insert(0, workdir)
-
-from app.config.RabbitTemplate import RabbitTemplate
-from app.controller.Controller import Controller
+# controller.Controller import Controller
 
 def load_env():
     env_path = Path(workdir + '/env') / '.env'
