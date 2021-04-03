@@ -9,3 +9,7 @@ dependencies:
   - pika
   - pytorch=1.7.0
   - numpy
+  - mxnet
+  - pip
+  - pip:
+    - gluoncv
