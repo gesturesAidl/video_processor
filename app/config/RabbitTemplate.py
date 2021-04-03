@@ -21,7 +21,8 @@ class RabbitTemplate:
 
         # Declare RPC
         self.channel.queue_declare(queue=RabbitConstants.RPC_REQUEST_QUEUE)
-        self.channel.exchange_declare(RabbitConstants.RPC_DIRECT_EXCHANGE, exchange_type='direct', durable=True)        self.channel.queue_bind(queue=RabbitConstants.RPC_REQUEST_QUEUE,
+        self.channel.exchange_declare(RabbitConstants.RPC_DIRECT_EXCHANGE, exchange_type='direct', durable=True)
+        self.channel.queue_bind(queue=RabbitConstants.RPC_REQUEST_QUEUE,
                                 exchange=RabbitConstants.RPC_DIRECT_EXCHANGE,
                                 routing_key=RabbitConstants.RPC_REQ_ROUTING_KEY)
 
