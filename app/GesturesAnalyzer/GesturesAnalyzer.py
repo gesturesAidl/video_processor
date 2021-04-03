@@ -59,7 +59,7 @@ class GesturesAnalyzer:
 
         if self.last_clip:
             video = self.last_clip + frames
-            video_out = cv2.VideoWriter(path+video_name, self.video_writer, self.fps, self.frameSize)
+            video_out = cv2.VideoWriter(path+'/'+video_name, self.video_writer, self.fps, self.frameSize)
             for frame in video:
                 video_out.write(np.array(frame, dtype='uint8'))
             video_out.release()
