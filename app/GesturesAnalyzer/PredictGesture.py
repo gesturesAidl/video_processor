@@ -1,5 +1,6 @@
 import torch
 import os
+import numpy as np
 
 from app.GesturesAnalyzer.Classifier2stream import ClassifierTwoStream
 
@@ -20,9 +21,13 @@ class PredictGesture:
         self.trained_model.eval()
 
     def prediction(self, rgb_feat, flow_feat):
-        
+        #return True
         # Predict class from features
         with torch.no_grad():
+            #TODO: Here code crashes. 
+            # rgb_feat and flow_feat are of type NDArray - mxnet own version of numpy array
+            # Find out how to fix...or convert to tensor
+        
             rgb_feat = rgb_feat.to(self.device)
             flow_feat = flow_feat.to(self.device)
             output = self.trained_model(rgb_feat, flow_feat)

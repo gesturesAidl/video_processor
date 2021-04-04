@@ -7,7 +7,7 @@ from gluoncv.data.transforms import video
 from gluoncv.model_zoo import get_model
 from gluoncv.data import VideoClsCustom
 from gluoncv.utils.filesystem import try_import_decord
-
+from app.config import config
 
 class FeatureExtractor:
 
@@ -17,10 +17,10 @@ class FeatureExtractor:
         image_norm_std = [0.229, 0.224, 0.225]
         model = 'i3d_resnet50_v1_kinetics400'
         num_classes = 400
-
         self.data_dir = '' # NEED TO COMPLETE
         self.dtype = 'float32'
         self.num_segments = 1
+        self.new_step = 1
         self.gpu_id = -1 # gpu id, -1 for none 
         self.input_size = 224 
         self.new_length = 32
@@ -61,8 +61,11 @@ class FeatureExtractor:
 
         return nd.array(clip_input)
 
-    def extract_features(self,video_path):
-        data_list = self.data_dir+"data_list.txt"
+
+
+
+    def extract_features(self,video_path, _id):
+        data_list = os.getcwd() + "/data_list_" + str(_id) + ".txt"
         f= open(data_list,"w+")
         f.write(video_path)
         f.close()
@@ -85,5 +88,5 @@ class FeatureExtractor:
         video_input = video_data.as_in_context(self.context)
         video_feat = self.net(video_input.astype(self.dtype, copy=False))
         os.remove(data_list)
-        
+        config.features[_id] = video_feat
         return video_feat

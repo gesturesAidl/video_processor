@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import os
 
+from app.config import config
 from app.GesturesAnalyzer.FeatureExtractor import FeatureExtractor
 from app.GesturesAnalyzer.OpticalFlowExtractor import OpticalFlowExtractor
 from app.GesturesAnalyzer.PredictGesture import PredictGesture
@@ -22,20 +23,20 @@ class GesturesAnalyzer:
         self.video_writer = cv2.VideoWriter_fourcc(*'XVID')
 
 
-    def process_video(self, video):
+    def process_video(self, path):
         try:
             threads = []
-            feature_extraction = threading.Thread(target=self.feature_extractor.extract_features, args=[video])
+            feature_extraction = threading.Thread(target=self.feature_extractor.extract_features, args=[path, 0])
             threads.append(feature_extraction)
             feature_extraction.start()
 
-            optical_flow_calc = threading.Thread(target=self.optical_flow_extractor.extract_optical_flow, args=[video])
+            optical_flow_calc = threading.Thread(target=self.optical_flow_extractor.extract_optical_flow, args=[path, 1])
             threads.append(optical_flow_calc)
             optical_flow_calc.start()
 
             # Blocking main thread until both processes have been performed.
-            features = feature_extraction.join()
-            optical_flow = optical_flow_calc.join()
+            feature_extraction.join()
+            optical_flow_calc.join()
 
         except Exception as e:
             print(str(e))
@@ -43,7 +44,7 @@ class GesturesAnalyzer:
         # When both methods have finished, use results in {@features} and {@optical_flow} to pass through
         # model to get the most likely class of the video.
         
-        pred_gesture = self.predict_gesture.prediction(features, optical_flow)
+        pred_gesture = self.predict_gesture.prediction(config.features[0], config.features[1])
         
         # Set results as a Gestures object
         gesture = Gestures()
@@ -63,4 +64,6 @@ class GesturesAnalyzer:
             video_out.release()
 
         self.last_clip = frames
-        return Gestures()
+        
+        #TODO: return both as workaround, until better way to handle responses (See Controller)
+        return Gestures(), path+'/'+video_name
