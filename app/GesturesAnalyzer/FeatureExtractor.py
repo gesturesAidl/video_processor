@@ -8,7 +8,7 @@ from gluoncv.model_zoo import get_model
 from gluoncv.data import VideoClsCustom
 from gluoncv.utils.filesystem import try_import_decord
 from app.config import config
-
+from app.config import config_flow
 
 class FeatureExtractor:
 
@@ -89,5 +89,10 @@ class FeatureExtractor:
         video_input = video_data.as_in_context(self.context)
         video_feat = self.net(video_input.astype(self.dtype, copy=False))
         os.remove(data_list)
-        config.features[_id] = video_feat
+        
+        if(_id == 0):
+            config.features = video_feat
+        else:
+            config_flow.features_flow = video_feat
+        
         return video_feat

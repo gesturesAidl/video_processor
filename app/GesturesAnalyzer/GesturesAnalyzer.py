@@ -4,6 +4,7 @@ import cv2
 import os
 
 from app.config import config
+from app.config import config_flow
 from app.GesturesAnalyzer.FeatureExtractor import FeatureExtractor
 from app.GesturesAnalyzer.OpticalFlowExtractor import OpticalFlowExtractor
 from app.GesturesAnalyzer.PredictGesture import PredictGesture
@@ -44,7 +45,7 @@ class GesturesAnalyzer:
         # When both methods have finished, use results in {@features} and {@optical_flow} to pass through
         # model to get the most likely class of the video.
         
-        pred_gesture = self.predict_gesture.prediction(config.features[0], config.features[1])
+        pred_gesture = self.predict_gesture.prediction(config.features, config_flow.features_flow)
         
         # Set results as a Gestures object
         gesture = Gestures()
@@ -54,7 +55,7 @@ class GesturesAnalyzer:
     def save_video(self, frames):
         self.count = self.count+1
         video_name = str(self.count) + '.avi'
-        path = os.getenv('VIDEOS_OUT_PATH')
+        path = '/Users/sofia/code/video_processor/output_videos'
 
         if self.last_clip:
             video = self.last_clip + frames
@@ -64,6 +65,6 @@ class GesturesAnalyzer:
             video_out.release()
 
         self.last_clip = frames
-        #return both until find better way to handle responses 
         
+        #TODO: return both as workaround, until better way to handle responses (See Controller)
         return Gestures(), path+'/'+video_name
