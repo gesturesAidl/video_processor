@@ -88,5 +88,5 @@ class FeatureExtractor:
         video_input = video_data.as_in_context(self.context)
         video_feat = self.net(video_input.astype(self.dtype, copy=False))
         os.remove(data_list)
-        config.features[_id] = video_feat
-        return video_feat.asnumpy()
+        config.features[_id] = video_feat.asnumpy()
+
