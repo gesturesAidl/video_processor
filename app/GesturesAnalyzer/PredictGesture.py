@@ -27,8 +27,9 @@ class PredictGesture:
             #TODO: Here code crashes. 
             # rgb_feat and flow_feat are of type NDArray - mxnet own version of numpy array
             # Find out how to fix...or convert to tensor
-        
+            rgb_feat = torch.tensor(rgb_feat).view(-1)
             rgb_feat = rgb_feat.to(self.device)
+            flow_feat = torch.tensor(flow_feat).view(-1)
             flow_feat = flow_feat.to(self.device)
             output = self.trained_model(rgb_feat, flow_feat)
             pred_gesture = output.argmax(-1)
