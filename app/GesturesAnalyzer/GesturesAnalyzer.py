@@ -2,6 +2,7 @@ import threading
 import numpy as np
 import cv2
 import os
+import time
 
 from app.config import config
 from app.GesturesAnalyzer.FeatureExtractor import FeatureExtractor
@@ -22,8 +23,8 @@ class GesturesAnalyzer:
         self.fps = 12
         self.video_writer = cv2.VideoWriter_fourcc(*'XVID')
 
-
     def process_video(self, path):
+        start = time.time()
         try:
             threads = []
             feature_extraction = threading.Thread(target=self.feature_extractor.extract_features, args=[path, 0])
@@ -49,9 +50,13 @@ class GesturesAnalyzer:
         # Set results as a Gestures object
         gesture = Gestures()
         gesture.set_label(pred_gesture)
+
+        end = time.time()
+        print("Process video:" + str(end-start))
         return gesture
 
     def save_video(self, frames):
+        start = time.time()
         self.count = self.count+1
         video_name = str(self.count) + '.avi'
         path = os.getenv('VIDEOS_OUT_PATH')
@@ -64,6 +69,8 @@ class GesturesAnalyzer:
             video_out.release()
 
         self.last_clip = frames
-        
+
+        end = time.time()
+        print("Save video:" + str(end - start))
         #TODO: return both as workaround, until better way to handle responses (See Controller)
         return Gestures(), path+'/'+video_name

@@ -1,6 +1,8 @@
 import os
 import numpy as np
 import mxnet as mx
+import time
+
 from mxnet import nd
 from mxnet.gluon.data.vision import transforms
 from gluoncv.data.transforms import video
@@ -8,6 +10,7 @@ from gluoncv.model_zoo import get_model
 from gluoncv.data import VideoClsCustom
 from gluoncv.utils.filesystem import try_import_decord
 from app.config import config
+
 
 class FeatureExtractor:
 
@@ -45,6 +48,7 @@ class FeatureExtractor:
         self.transform_test = video.VideoGroupValTransform(size=self.input_size, mean=image_norm_mean, std=image_norm_std)
 
     def read_data(self, video_name, transform, video_utils):
+        start = time.time()
         decord = try_import_decord()
         decord_vr = decord.VideoReader(video_name, width=self.new_width, height=self.new_height)
         duration = len(decord_vr)
@@ -59,12 +63,12 @@ class FeatureExtractor:
         clip_input = clip_input.reshape((-1,) + (self.new_length, 3, self.input_size, self.input_size))
         clip_input = np.transpose(clip_input, (0, 2, 1, 3, 4))
 
+        end = time.time()
+        print("Read data:" + str(end - start))
         return nd.array(clip_input)
 
-
-
-
     def extract_features(self,video_path, _id):
+        start = time.time()
         data_list = os.getcwd() + "/data_list_" + str(_id) + ".txt"
         f= open(data_list,"w+")
         f.write(video_path)
@@ -89,4 +93,6 @@ class FeatureExtractor:
         video_feat = self.net(video_input.astype(self.dtype, copy=False))
         os.remove(data_list)
         config.features[_id] = video_feat.asnumpy()
+        end = time.time()
+        print("Extract features:" + str(end - start))
 

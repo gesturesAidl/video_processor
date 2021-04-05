@@ -1,6 +1,7 @@
 import torch
 import os
 import numpy as np
+import time
 
 from app.GesturesAnalyzer.Classifier2stream import ClassifierTwoStream
 
@@ -21,6 +22,7 @@ class PredictGesture:
         self.trained_model.eval()
 
     def prediction(self, rgb_feat, flow_feat):
+        start = time.time()
         #return True
         # Predict class from features
         with torch.no_grad():
@@ -34,4 +36,6 @@ class PredictGesture:
             output = self.trained_model(rgb_feat, flow_feat)
             pred_gesture = output.argmax(-1)
 
+        end = time.time()
+        print("Prediction:" + str(end - start))
         return pred_gesture

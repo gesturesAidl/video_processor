@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import time
 from app.GesturesAnalyzer.FeatureExtractor import FeatureExtractor
 
 class OpticalFlowExtractor:
@@ -10,8 +11,8 @@ class OpticalFlowExtractor:
         self.size = (170,100)
         self.folderOut = 'FLOW_OUT_PATH' # MUST BE CHANGED 'ie/
 
-
     def extract_optical_flow(self, video, _id):
+        start = time.time()
         cap = cv2.VideoCapture(video)
         length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
@@ -46,4 +47,7 @@ class OpticalFlowExtractor:
             out.write(array[i])
         out.release()
         self.feature_extractor.extract_features(flow_path, _id)
-        
+
+        end = time.time()
+        print("Extract optical flow:" + str(end-start))
+
