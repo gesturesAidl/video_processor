@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import os
 import time
+import json
 
 from app.config import config
 from app.GesturesAnalyzer.FeatureExtractor import FeatureExtractor
@@ -22,6 +23,8 @@ class GesturesAnalyzer:
         self.frameSize = (170, 100)
         self.fps = 12
         self.video_writer = cv2.VideoWriter_fourcc(*'XVID')
+        self.labels = ["no_gesture", "doing_other_things", "stop_sign", "thumb_up", "sliding_two_fingers_down", 
+            "sliding_two_fingers_up", "swiping_right", "swiping_left", "turning_hand_clockwise"]
 
     def process_video(self, path):
         start = time.time()
@@ -48,8 +51,10 @@ class GesturesAnalyzer:
         pred_gesture = self.predict_gesture.prediction(config.features[0], config.features[1])
         
         # Set results as a Gestures object
-        gesture = Gestures()
-        gesture.set_label(pred_gesture)
+        #gesture = Gestures()
+        #gesture.set_label(pred_gesture)
+        
+        gesture = json.dumps({'label': self.labels[pred_gesture]})
 
         end = time.time()
         print("Process video:" + str(end-start))
