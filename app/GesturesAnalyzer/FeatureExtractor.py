@@ -3,13 +3,13 @@ import numpy as np
 import mxnet as mx
 import time
 
+from mxnet import profiler
 from mxnet import nd
 from mxnet.gluon.data.vision import transforms
 from gluoncv.data.transforms import video
 from gluoncv.model_zoo import get_model
 from gluoncv.data import VideoClsCustom
 from gluoncv.utils.filesystem import try_import_decord
-from app.config import config
 
 
 class FeatureExtractor:
@@ -33,6 +33,9 @@ class FeatureExtractor:
         self.use_decord = True
         self.num_crop = 1
         self.data_aug = 'v1'
+        self.slow_temporal_stride = 16
+        self.fast_temporal_stride = 2
+        
         
         if self.gpu_id == -1:
             self.context = mx.cpu()
@@ -45,7 +48,16 @@ class FeatureExtractor:
         
         self.net.cast(self.dtype)
         self.net.collect_params().reset_ctx(self.context)
+
+        print('Pre-trained model is successfully loaded from the model zoo.')
+        print("Successfully built model")
         self.transform_test = video.VideoGroupValTransform(size=self.input_size, mean=image_norm_mean, std=image_norm_std)
+        profiler.set_config(profile_all=True,
+                    aggregate_stats=True,
+                    continuous_dump=True,
+                    filename='profile_output.json')
+
+
 
     def read_data(self, video_name, transform, video_utils):
         start = time.time()
@@ -68,6 +80,7 @@ class FeatureExtractor:
         return nd.array(clip_input)
 
     def extract_features(self,video_path, _id):
+        profiler.set_state('run')
         start = time.time()
         data_list = os.getcwd() + "/data_list_" + str(_id) + ".txt"
         f= open(data_list,"w+")
@@ -84,6 +97,8 @@ class FeatureExtractor:
                                      new_height=self.new_height,
                                      video_loader=self.video_loader,
                                      use_decord=self.use_decord,
+                                     slow_temporal_stride=self.slow_temporal_stride,
+                                     fast_temporal_stride=self.fast_temporal_stride,
                                      data_aug=self.data_aug,
                                      lazy_init=True)
 
@@ -92,7 +107,14 @@ class FeatureExtractor:
         video_input = video_data.as_in_context(self.context)
         video_feat = self.net(video_input.astype(self.dtype, copy=False))
         os.remove(data_list)
-        config.features[_id] = video_feat.asnumpy()
         end = time.time()
         print("Extract features:" + str(end - start))
-
+        
+        end2 = time.time()
+        print("return asnumpy:" + str(end2 - end))
+        mx.nd.waitall()
+        # Ask the profiler to stop recording
+        profiler.set_state('stop')
+        # Dump all results to log file before download
+        print(profiler.dumps())
+        return video_feat.asnumpy()

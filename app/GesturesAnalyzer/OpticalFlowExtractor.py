@@ -9,7 +9,7 @@ class OpticalFlowExtractor:
         self.feature_extractor = FeatureExtractor()
         self.fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         self.size = (170,100)
-        self.folderOut = 'FLOW_OUT_PATH' # MUST BE CHANGED 'ie/
+        self.folderOut = 'output_flow/' # MUST BE CHANGED 'ie/
 
     def extract_optical_flow(self, video, _id):
         start = time.time()
@@ -46,8 +46,8 @@ class OpticalFlowExtractor:
         for i in range(len(array)):
             out.write(array[i])
         out.release()
-        self.feature_extractor.extract_features(flow_path, _id)
-
+        
         end = time.time()
         print("Extract optical flow:" + str(end-start))
+        return flow_path
 

@@ -26,18 +26,9 @@ class GesturesAnalyzer:
     def process_video(self, path):
         start = time.time()
         try:
-            threads = []
-            feature_extraction = threading.Thread(target=self.feature_extractor.extract_features, args=[path, 0])
-            threads.append(feature_extraction)
-            feature_extraction.start()
-
-            optical_flow_calc = threading.Thread(target=self.optical_flow_extractor.extract_optical_flow, args=[path, 1])
-            threads.append(optical_flow_calc)
-            optical_flow_calc.start()
-
-            # Blocking main thread until both processes have been performed.
-            feature_extraction.join()
-            optical_flow_calc.join()
+            features = self.feature_extractor.extract_features(path, 0)
+            optical_flow_path = self.optical_flow_extractor.extract_optical_flow(path,1)
+            optical_flow_feat = self.feature_extractor.extract_features(optical_flow_path, 1)
 
         except Exception as e:
             print(str(e))
@@ -45,8 +36,7 @@ class GesturesAnalyzer:
         # When both methods have finished, use results in {@features} and {@optical_flow} to pass through
         # model to get the most likely class of the video.
         
-        pred_gesture = self.predict_gesture.prediction(config.features[0], config.features[1])
-        
+        pred_gesture = self.predict_gesture.prediction(features, optical_flow_feat)        
         # Set results as a Gestures object
         gesture = Gestures()
         gesture.set_label(pred_gesture)
