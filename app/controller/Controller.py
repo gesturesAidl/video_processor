@@ -21,7 +21,5 @@ class Controller:
 
         path = self.gestures_analyzer.save_video(frames)
         if os.path.exists(path):
-            label = self.gestures_analyzer.process_video(path)
-            json_response = {'label': label}
-
+            json_response = self.gestures_analyzer.process_video(path)
         self.rabbit_template.rpc_reply(ch, method, props, json.dumps(json_response))
