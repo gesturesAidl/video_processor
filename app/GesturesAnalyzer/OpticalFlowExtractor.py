@@ -8,7 +8,7 @@ class OpticalFlowExtractor:
     def __init__(self):
         self.fourcc = cv2.VideoWriter_fourcc(*'XVID')
         self.size = (170,100)
-        self.folderOut = 'FLOW_OUT_PATH' # MUST BE CHANGED 'ie/
+        self.folderOut = 'output_flow/' # MUST BE CHANGED 'ie/
 
     def extract_optical_flow(self, video, _id):
         start = time.time()
