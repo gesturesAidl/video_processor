@@ -25,7 +25,7 @@ class FeatureExtractor:
         self.dtype = 'float32'
         self.num_segments = 1
         self.new_step = 1
-        self.gpu_id = -1 # gpu id, -1 for none 
+        self.gpu_id = 0 # gpu id, -1 for none
         self.input_size = 224 
         self.new_length = 32
         self.new_height = 256
