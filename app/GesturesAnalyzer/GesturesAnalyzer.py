@@ -85,4 +85,4 @@ class GesturesAnalyzer:
         end = time.time()
         print("Save video:" + str(end - start))
         #TODO: return both as workaround, until better way to handle responses (See Controller)
-        return Gestures(), path+'/'+video_name
+        return path+'/'+video_name
