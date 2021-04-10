@@ -17,6 +17,7 @@ class Controller:
     def consume_video(self, ch, method, props, body):
         print("Video received at: " + str(datetime.datetime.utcnow()))
         frames = json.loads(body)
+        json_response = {'label': 'no_gesture'}
 
         path = self.gestures_analyzer.save_video(frames)
         if os.path.exists(path):
