@@ -69,7 +69,7 @@ class GesturesAnalyzer:
 
     def save_video(self, frames):
         start = time.time()
-        self.count = self.count+1
+        self.count = self.count+1 % 10
         video_name = str(self.count) + '.avi'
         path = os.getenv('VIDEOS_OUT_PATH')
 
