@@ -68,21 +68,16 @@ class GesturesAnalyzer:
         return gesture
 
     def save_video(self, frames):
-        start = time.time()
         self.count = self.count+1 % 10
         video_name = str(self.count) + '.avi'
         path = os.getenv('VIDEOS_OUT_PATH')
 
-        if self.last_clip:
-            video = self.last_clip + frames
-            video_out = cv2.VideoWriter(path+'/'+video_name, self.video_writer, self.fps, self.frameSize)
-            for frame in video:
-                video_out.write(np.array(frame, dtype='uint8'))
-            video_out.release()
+        video = self.last_clip + frames
+        video_out = cv2.VideoWriter(path+'/'+video_name, self.video_writer, self.fps, self.frameSize)
+        for frame in video:
+            video_out.write(np.array(frame, dtype='uint8'))
+        video_out.release()
 
-        self.last_clip = frames
-
-        end = time.time()
         print("Save video:" + str(end - start))
         #TODO: return both as workaround, until better way to handle responses (See Controller)
         return path+'/'+video_name
