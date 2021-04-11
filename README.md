@@ -118,23 +118,24 @@ As it can be observed on the figure, our hypothesis was true and the network man
 We tried to further increase the accuracy by performing some data augmentation, keeping in mind our dataset and data treatment restrictions: 
 * As we were working with Optical Flow, we could not apply Gaussian Blurs or other image manipulation techniques that involved creating artificial motion as the resulting Optical Flow turned out to be completely useless.
 * As we had direction-dependant gestures, horizontal flips had to be discarded.
-Hence we decided to perform data augmentation by applying a 15% zoom to the videos and also contrast, saturation and brightness changes.  
+Hence we decided to perform data augmentation by applying a 15% zoom to the videos and also contrast, saturation and brigthness changes.
 
 Unfortunately, the results obtained did not show an improvement from the best models we had, so further exploration of the technique was discarded.
 
 ## END TO END IMPLEMENTATION
 
-As stated in the introduction, our project goal was not only to train a working classifier but to use it to control a device. In our case, we decided to control our personal computer mapping some hand gestures to actions:  
+As stated in the introduction, our project goal was not only to train a working classifier but to use it to control a device. In our case, we decided to control our personal computer mapping some hand gestures to actions that will be displayed in a file window on a computer with a Linux OS GUI. 
 
-|          Gesture         |   Action                      |
-|:------------------------:| :---------------------------: |
-| Sliding Two Fingers Down |   -- :heavy_exclamation_mark: | 
-|  Sliding Two Fingers Up  |   -- :heavy_exclamation_mark: | 
-|         Stop Sign        |   -- :heavy_exclamation_mark: | 
-|       Swiping Left       |   -- :heavy_exclamation_mark: | 
-|       Swiping Right      |   -- :heavy_exclamation_mark: | 
-|         Thumb Up         |   -- :heavy_exclamation_mark: | 
-|  Turning Hand Clockwise  |   -- :heavy_exclamation_mark: |
+
+|          Gesture         | Action  |
+|:------------------------:|:-------:|
+|         Thumb Up         |   Create a file  | 
+|         Stop Sign        |  Close opened file  | 
+|  Sliding Two Fingers Up  |   Create directory  | 
+| Sliding Two Fingers Down |   Remove all in directory  | 
+|       Swiping Left       |   Move to previous directory  | 
+|       Swiping Right      |  Move to forward directory  | 
+|  Turning Hand Clockwise  |   Close info/error popup  |
 
 *Note that the classes No Gesture and Doing Other Things are obviously not mapped to any action.*
 
