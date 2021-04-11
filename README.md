@@ -118,7 +118,7 @@ As it can be observed on the figure, our hypothesis was true and the network man
 We tried to further increase the accuracy by performing some data augmentation, keeping in mind our dataset and data treatment restrictions: 
 * As we were working with Optical Flow, we could not apply Gaussian Blurs or other image manipulation techniques that involved creating artificial motion as the resulting Optical Flow turned out to be completely useless.
 * As we had direction-dependant gestures, horizontal flips had to be discarded.
-Hence we decided to perform data augmentation by applying a 15% zoom to the videos and also contrast, saturation and brigthness changes.
+Hence we decided to perform data augmentation by applying a 15% zoom to the videos and also contrast, saturation and brightness changes.
 
 Unfortunately, the results obtained did not show an improvement from the best models we had, so further exploration of the technique was discarded.
 
