@@ -80,6 +80,12 @@ class FeatureExtractor:
         return nd.array(clip_input)
 
     def extract_features(self,video_path, _id):
+        net = get_model(name='i3d_resnet50_v1_kinetics400', nclass=400, pretrained=True,
+                        feat_ext=True, num_segments=self.num_segments, num_crop=self.num_crop)
+        
+        net.cast(self.dtype)
+        net.collect_params().reset_ctx(self.context)
+        
         profiler.set_state('run')
         start = time.time()
         data_list = os.getcwd() + "/data_list_" + str(_id) + ".txt"
@@ -105,7 +111,7 @@ class FeatureExtractor:
 
         video_data = self.read_data(video_path, self.transform_test, video_utils)
         video_input = video_data.as_in_context(self.context)
-        video_feat = self.net(video_input.astype(self.dtype, copy=False))
+        video_feat = net(video_input.astype(self.dtype, copy=False))
         os.remove(data_list)
         end = time.time()
         print("Extract features:" + str(end - start))
@@ -116,5 +122,15 @@ class FeatureExtractor:
         # Ask the profiler to stop recording
         profiler.set_state('stop')
         # Dump all results to log file before download
-        print(profiler.dumps())
+        #print(profiler.dumps())
         return video_feat.asnumpy()
+    
+
+    def extract_features_from_script(self,video_path, _id):
+        print('entered')
+        data_list = os.getcwd() + "/data_list_" + str(_id) + ".txt"
+        f= open(data_list,"w+")
+        f.write(video_path)
+        f.close()
+        os.system("python /home/gestures_aidl/scripts/feat_extract.py --data-list " + data_list +" --model i3d_resnet50_v1_kinetics400 --save-dir ./features --gpu-id 0")
+        # Dump all results to log file before download
