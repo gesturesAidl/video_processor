@@ -146,12 +146,12 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
 
+
 ## HOW TO RUN THE PROGRAM
 
 ### Installation
-###### Before Installation
 
-Before starting, make sure you have Python and that it's available from your command line.
+Before continuing, make sure you have Python installed and available from your command line.
 You can check this by simply running:
 
 ```bash
@@ -159,36 +159,52 @@ You can check this by simply running:
 $ python --version
 ```
 
-You should get some output like ```3.7.6.```
+Your output should look similar to:  ```3.8.2.```
+If you do not have Python, please install the latest 3.8 version from python.org.
 
-###### Installation
-If you do not have Python, please install the latest 3.x version from python.org or refer to th>
+#### Install Docker
+Make sure you have docker installed in your computer by typing: 
+```bash
+$ docker -v
+```
+If installed, you should get an output similar to: `Docker version 20.10.3`. If you do not have Docker, install the latest version from its official site: https://docs.docker.com/get-docker/
 
+#### Install docker-compose
+Make sure you have docker-compose installed in your computer by typing: 
+```bash
+$ docker-compose -v
+```
+If installed, you should get an output similar to: `docker-compose version 1.27.4`. If you do not have docker-compose, install the latest version from its official site: https://docs.docker.com/compose/install/
 
 #### Install Miniconda
 
-To test your installation, in your terminal window or Anaconda Prompt, run the command conda li>
-Open terminal, type "bash" and press ENTER
-Then run conda list
+To test your installation, in your terminal window or Anaconda Prompt, run the command: 
+```bash
+$ conda list
+```
+And you should obtain the list of packages installed in your base environment.
 
-#### Create Miniconda environment
+#### Create your Miniconda environment
+
+>  Notice: This repository has been designed in order to allow being executed with two different environments. If you have a GPU in your computer, make use of the file "environment_gpu.yml" during the next section, in case you only have CPU, use the file "environment.yml" to prepare your environment.
 
 Execute:
 
-        conda env create -f environment.yml
+```bash
+ $ conda env create -f environment_gpu.yml
+```
 
-This will generate the videoprocessor environment with all the required tools installed.
-Once created activate the environment by typing:
+This will generate the `videoprocgpu` environment with all the required tools and packages installed.
 
-        conda activate videoprocessor
+Once your environment had been created, activate it by typing:
 
-#### Update from environment.yml
+```bash
+$ conda activate videoprocgpu
+```
 
-    conda env update --file environment.yml
-    
-#### Create .env file
-Create a folder with name 'env' inside the video_processor root directory folder and then, create a .env file inside it.
-Copy the following code to your .env file and set the fields with your rabbitmq broker connection parameters: 
+#### Create your .env file
+Create a folder with name `/env` inside the video_processor root directory folder and then, create a `.env` file inside it.
+Copy the following code to your `.env` file:
 
     RABBIT_USER="..."
     RABBIT_PW="..."
@@ -196,12 +212,36 @@ Copy the following code to your .env file and set the fields with your rabbitmq 
     RABBIT_PORT="..."
     VIDEOS_OUT_PATH="..."
     MODEL_DIR="..."
+    GPU="..."
     
+Replace the dots in your `.env` file with the following information:
+* RABBIT_USER: Default rabbit username.
+* RABBIT_PW: Default rabbit user password.
+* RABBIT_HOST: The IP or domain name where your rabbit service is hosted.
+* RABBIT_PORT: Default port of your rabbit service.
+* VIDEOS_OUT_PATH: Absolute path to the folder where you want to store your real time capturing videos. 
+* MODEL_DIR: Absolute path to the `./models` folder. By default this directory is placed at the root of this repository.
+* GPU: This field should be set to `Ture` in case you are using one GPU and `False` in case you are not.
 
-#### Set the working directory of your app
-In your app/app.py file, replace the {abs_path_to_your_project} variable in the 'workdir' var assignment to your absolute path to the project. 
+### RUN the project
+##### RabbitMQ
+Activate the project service dependencies by starting a rabbitmq container. Go to the `/deployment` folder and edit the `docker-compose.yml` file in order to add your user and password credentials. 
+* ${RABBIT_USER}: Replace by your rabbit default  user name.
+* ${RABBIT_PW}: Replace by your rabbit default password. 
 
-#### RUN project
-Place yourself in the repository root dir and type: 
+When your credentials had been set, from the same directory type:
 
-    python3 app/app.py
+```bash
+$ docker-compose up rabbitmq
+```
+
+##### Video processor app
+Finally, to start the video_processor `app`, place yourself in the repository root dir and type: 
+```bash
+$ python3 app/app.py
+```
+Now, the video processor app will be running as a process in your terminal and the server will be waiting for requests. You will see a log in your command line like the following:
+
+    [X] Start Consuming:
+
+    

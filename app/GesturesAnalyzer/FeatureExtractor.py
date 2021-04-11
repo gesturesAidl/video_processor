@@ -20,12 +20,15 @@ class FeatureExtractor:
         image_norm_std = [0.229, 0.224, 0.225]
         model = 'i3d_resnet50_v1_kinetics400'
         num_classes = 400
-        self.data_dir = '' # NEED TO COMPLETE
+        self.data_dir = ''  # NEED TO COMPLETE
         self.dtype = 'float32'
         self.num_segments = 1
         self.new_step = 1
-        self.gpu_id = 0 # gpu id, -1 for none 
-        self.input_size = 224 
+        if bool(os.getenv('GPU')):
+            self.gpu_id = 0
+        else:
+            self.gpu_id = -1
+        self.input_size = 224
         self.new_length = 32
         self.new_height = 256
         self.new_width = 340
@@ -35,8 +38,7 @@ class FeatureExtractor:
         self.data_aug = 'v1'
         self.slow_temporal_stride = 16
         self.fast_temporal_stride = 2
-        
-        
+
         if self.gpu_id == -1:
             self.context = mx.cpu()
         else:
@@ -44,20 +46,19 @@ class FeatureExtractor:
             self.context = mx.gpu(gpu_id)
 
         self.net = get_model(name=model, nclass=num_classes, pretrained=True,
-                        feat_ext=True, num_segments=self.num_segments, num_crop=self.num_crop)
-        
+                             feat_ext=True, num_segments=self.num_segments, num_crop=self.num_crop)
+
         self.net.cast(self.dtype)
         self.net.collect_params().reset_ctx(self.context)
 
         print('Pre-trained model is successfully loaded from the model zoo.')
         print("Successfully built model")
-        self.transform_test = video.VideoGroupValTransform(size=self.input_size, mean=image_norm_mean, std=image_norm_std)
+        self.transform_test = video.VideoGroupValTransform(size=self.input_size, mean=image_norm_mean,
+                                                           std=image_norm_std)
         profiler.set_config(profile_all=True,
-                    aggregate_stats=True,
-                    continuous_dump=True,
-                    filename='profile_output.json')
-
-
+                            aggregate_stats=True,
+                            continuous_dump=True,
+                            filename='profile_output.json')
 
     def read_data(self, video_name, transform, video_utils):
         start = time.time()
@@ -79,11 +80,11 @@ class FeatureExtractor:
         print("Read data:" + str(end - start))
         return nd.array(clip_input)
 
-    def extract_features(self,video_path, _id):
+    def extract_features(self, video_path, _id):
         profiler.set_state('run')
         start = time.time()
         data_list = os.getcwd() + "/data_list_" + str(_id) + ".txt"
-        f= open(data_list,"w+")
+        f = open(data_list, "w+")
         f.write(video_path)
         f.close()
         # build a pseudo dataset instance to use its children class methods
@@ -102,14 +103,13 @@ class FeatureExtractor:
                                      data_aug=self.data_aug,
                                      lazy_init=True)
 
-
         video_data = self.read_data(video_path, self.transform_test, video_utils)
         video_input = video_data.as_in_context(self.context)
         video_feat = self.net(video_input.astype(self.dtype, copy=False))
         os.remove(data_list)
         end = time.time()
         print("Extract features:" + str(end - start))
-        
+
         end2 = time.time()
         print("return asnumpy:" + str(end2 - end))
         mx.nd.waitall()
