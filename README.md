@@ -8,13 +8,17 @@ Advised by **Amanda Duarte**.
 
 [DATASET](#dataset)
 
-[ARCHITECTURE](#architecture)
+[ARCHITECTURE AND RESULTS](#architecture-and-results)
 
-[RESULTS](#results)
+[ABLATION STUDIES](#ablation-studies)
 
-[END TO END IMPLEMENTATION](#end-to-end-implementation)
+[END TO END SYSTEM](#end-to-end-system)
+
+[HOW TO RUN THE TRAINING](#how-to-run-the-training)
 
 [HOW TO RUN THE PROGRAM](#how-to-run-the-program)
+
+
 
 
 ## INTRODUCTION AND MOTIVATION
@@ -26,7 +30,11 @@ We have created a gesture recognition system that works by capturing videos with
 
 ## DATASET
 
-The data we used to train and validate our model was from the [Jester Dataset](https://20bn.com/datasets/jester), which is a label collection of videos of humans performing hand gestures. The data is given in the JPG frames of the videos, which were recorded at 12 fps. Specifically, the dataset contains 150k videos of 27 different classes. As the goal of our project was to control basic functionalities of a computer, we decided to reduce the number of classes and to choose the gestures which made more sense from a control point of view. The used classes and the number of samples of each one are:
+The data we used to train and validate our model was from the [Jester Dataset](https://20bn.com/datasets/jester), which is a label collection of videos of humans performing hand gestures. The data is given in the JPG frames of the videos, which were recorded at 12 fps. Specifically, the dataset contains 150k videos of 27 different classes. 
+
+![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/jester-v1.gif?raw=true)
+
+As the goal of our project was to control basic functionalities of a computer, we decided to reduce the number of classes and to choose 9 gestures which made more sense from a control point of view. The used classes and the number of samples of each one are:
 
 |          Gesture         | Samples |
 |:------------------------:|:-------:|
@@ -42,24 +50,41 @@ The data we used to train and validate our model was from the [Jester Dataset](h
 
 The first two classes, Doing Other Things and No Gesture, were added to our list of classes in order to have basic states when we are not trying to control the computer.
 
-![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/jester-v1.gif?raw=true)
 
-## ARCHITECTURE
+
+## ARCHITECTURE AND RESULTS
 
 To better understand the model’s architecture, the general pipeline should be first briefly explained. First of all, when an RGB video is received its optical flow is computed and features are extracted from both videos using an I3D Network. Then, these features are fed into a Neural Network, whose output are the probabilities for each class.
 
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/architecture.png?raw=true)
 
+It must be noted that the decision of using RGB and Optical Flow videos was made after [different attempts](#model-improvements) to improve the model.
+
+
 ### Optical Flow:
-We computed the dense Optical Flow with the Farneback’s algorithm implementation of OpenCV. As the videos of the dataset have a low resolution and experience a lot of lightning changes, the Optical Flow results showed some imperfections, which we tried to solve by different approaches (MAYBE EXPLAIN THEM? :bangbang: ) . Unfortunately, we could not find how to correct them, and decided to move on with the Optical Flow we had in order to be able to continue advancing with the project.
+We computed the dense Optical Flow with the Farneback’s algorithm implementation of OpenCV. As the videos of the dataset have a low resolution and experience a lot of lightning changes, the Optical Flow results showed some imperfections, which we tried to solve by [different approaches](#optical-flow-improvements). Unfortunately, we could not find how to correct them, and decided to move on with the Optical Flow we had in order to be able to continue advancing with the project.
 
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/rgb_flow.gif?raw=true)
 
 ### I3D
 In order to extract features from the videos (both RGB and Optical Flow) we used an Inflated 3D Network (I3D), as it is a widely used network for video classification, able to learn spatiotemporal information from the videos. In our case, the chosen I3D had weight initialization from a ResNet50 network trained on Imagenet, and was also pre-trained on the action recognition dataset Kinetics-400, since it’s an state-of-the-art model with a good balance between accuracy and computational requirements. The model is provided by [GluonCV](https://cv.gluon.ai/) and runs on MXnet.
 
-### Neural Network
-The RGB and the Optical Flow videos go through the previously mentioned I3D network, and features for both of them are obtained. One of the decisions we had to make is how to join them, and we explored various possibilities based on the ones mentioned in a [paper](http://vision.soic.indiana.edu/papers/extremelylow2018wacv.pdf) of action recognition for low resolution videos:
+### Classifier Neural Network
+The RGB and the Optical Flow videos are processed by the previously mentioned I3D network, and features for both of them are obtained and go through a [neural network architecture with two streams](https://github.com/gesturesAidl/video_processor/blob/main/app/GesturesAnalyzer/Classifier2stream.py), which was designed considering the [different options](#feature-joinig) of how to combine the features. Briefly, both features go through their respective branches of the neural network and the output logits are added up, go through a LogSoftMax layer whose output are the final probabilities. These network was trained and [hyperparameter-tuned](#hyperparameter-tuning) to yield the final results: 
+
+:bangbang: PLOT OF THE BEST RESULTS
+
+This model saved and used on the final gesture recognition task.
+
+## ABLATION STUDIES
+
+### OPTICAL FLOW IMPROVEMENTS
+
+:bangbang: 
+
+### FEATURE JOINING
+
+One of the decisions we had to make is how to join the RGB and Optical Flow, and we explored various possibilities based on the ones mentioned in a [paper](http://vision.soic.indiana.edu/papers/extremelylow2018wacv.pdf) of action recognition for low resolution videos:
 * Addition of the I3D features
 * Concatenation of the I3D features
 * Maximal value retention for each I3D features
@@ -69,17 +94,13 @@ The first three methods are based on the use of a single NN to classify the feat
 
 Hence, we tested the different methods with similar standard networks. We obtained the results shown on the figure below, and as we can see the performance is quite similar for all of the methods, with the concatenation (Concat) and logit addition (Sum after) methods performing slightly better than the other ones.
 
-To decide which method to use we explored the number of parameters, to try to minimize computational time/cost, and of hyperparameters, to account for the tunability of the model. Regarding the parameters of the networks, both have a very similar number of them, with a difference on parameters of three orders of magnitude lower than the total number of parameters, so it was considered negligible. :heavy_exclamation_mark:With respect to the tunability, the method that adds up the logits has nearly the double of hyperparameters as the concatenation method, so we decided to use the former in our architecture.:heavy_exclamation_mark:
+To decide which method to use we explored the number of parameters, to try to minimize computational time/cost, and of hyperparameters, to account for the tunability of the model. Regarding the parameters of the networks, both have a very similar number of them, with a difference on parameters of three orders of magnitude lower than the total number of parameters, so it was considered negligible. With respect to the tunability, the method that adds up the logits has nearly the double of hyperparameters as the concatenation method, so we decided to use the former in our architecture.
 
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/feature_join.png?raw=true)
 
-Hence, a neural network architecture with two streams was [created](https://github.com/gesturesAidl/video_processor/blob/main/app/GesturesAnalyzer/Classifier2stream.py) and trained, as will be commented in the [results section](#results). After the addition of the logits, the result goes through a LogSoftMax layer, and its output are the probabilities for each class.
+### MODEL IMPROVEMENTS
 
-
-
-## RESULTS
-
-### FIRST APPROACH: RGB VIDEOS
+#### FIRST APPROACH: RGB VIDEOS
 
 The first way we explored to address the classification task was using only the extracted features from the RGB videos to classify them. After some training and hyperparameter tuning, the obtained accuracy was around 70%, which was still far from our desired accuracy values. To try to understand better where the model was struggling, we computed the confusion matrix of the predictions and some revealing results where found: the model encountered difficulties when differentiating the gestures that are the same movement but in different directions (i.e. Swiping left/Swiping right).
 
@@ -87,19 +108,37 @@ To address that problem, we thought that we could capture better the temporal an
 
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/rgb.png?raw=true)
 
-### SECOND APPROACH: OPTICAL FLOW VIDEOS
+#### SECOND APPROACH: OPTICAL FLOW VIDEOS
 
-After training the model with only the Optical Flow features, following the same steps that had been done during the first approach, it was observed that while the accuracy of the whole model diminished, the confusion between the troublesome gestures was reduced, confirming the hypothesis that better directional information was captures although the whole classification was far worst. 
+After training the model with only the Optical Flow features, following the same steps that had been done during the first approach, it was observed that while the accuracy of the whole model diminished, as the model could not classify well the videos with little movement (Stop Sign, Thumb Up), the confusion between the troublesome gestures was reduced, confirming the hypothesis that better directional information was captured.
 
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/flow.png?raw=true)
 
-### THIRD APPROACH: TWO STREAM (RGB AND OPTICAL FLOW VIDEOS)
+A detailed accuracy comparison between the two approaches can be seen on the table below:
 
-From the First and second approaches, we decided to use a model with two streams, one for RGB videos to help with the general classification task and the other one for the Optical Flow to address the confusion problem, and combine them as previously stated on the [architecture section](#architecture). Doing so doubles the amount of data and computer time/cost but was done in the hope of the model being able to keep the best parts of both approaches and yield better results.
+|          Gesture         | RGB accuracy | FLOW accuracy|
+|:------------------------:|:-------:|:------:
+|    Doing Other Things    | 0.954  | 0.795|
+|        No Gesture        |   0.913  |0.719|
+| Sliding Two Fingers Down |    0.568| 0.598  |
+|  Sliding Two Fingers Up  |    0.367 | 0.523|
+|         Stop Sign        |    0.774   | 0.348|
+|       Swiping Left       |   0.567 | 0.578|
+|       Swiping Right      |    0.344 | 0.609 |
+|         Thumb Up         |  0.742  | 0.380|
+|  Turning Hand Clockwise  |   0.867 |0.566|
 
-#### Hyperparameter tuning
 
-To try to get the best results possible, an extensive hyperparameter tuning was performed (note that it was also done in the first and second approach). In this case, the tuned parameters were: 
+#### THIRD APPROACH: TWO STREAM (RGB AND OPTICAL FLOW VIDEOS)
+
+From the First and second approaches, we decided to use a model with two streams, one for RGB videos to help with the general classification task and the other one for the Optical Flow to address the confusion problem, and combine them as stated on the the previous section. Doing so doubles the amount of data and computer time/cost but was done in the hope of the model being able to keep the best parts of both approaches and yield better results. As it can be observed on the figure, our hypothesis was true and the network managed to learn appropriately from the two streams of data and improved the overall accuracy, which went from 70% of the RGB videos and 57% of the Optical Flow ones up to +80%, a significant increase. 
+
+
+![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/rgb_flow_80.jpg?raw=true)
+
+### HYPERPARAMETER TUNING
+
+To try to get the best results possible, an extensive hyperparameter tuning was performed (note that it was done in all the three approaches described on the previous section). In the most relevant approach, the third one, the tuned parameters were: 
 
 |          Parameter         | Value Range |
 |:--------------------------:|:-----:|
@@ -109,11 +148,26 @@ To try to get the best results possible, an extensive hyperparameter tuning was 
 |  Flow Hidden Layer  |  choice(128, 256, 512, 1024, 2048)  | 
 
 :bangbang: WE SHOULD ADD A LITTLE EXPLANATION OF THE SCHEDUELRS OR SEARCH ALGORITHM USED, I DON'T REMEMBER IT WELL ENOUGH TO EXPLAIN THEM. ENRIQUE SEND HELP
-:bangbang: PLOTS AND CONFUSSION NEED TO BE ADDED, WAITING FOR CONFIRMATION OF WHICH ONE (THE BEST)
 
-As it can be observed on the figure, our hypothesis was true and the network managed to learn appropriately from the two streams of data and improved the overall accuracy, which went from 70% of the RGB videos and 57% of the Optical Flow ones to 83.1%, a significant increase.
+The best model we found had a 83.11%, with the following parameters:
 
-### FURTHER EXPLORATION: DATA AUGMENTATION
+|          Parameter         | Value Range |
+|:--------------------------:|:-----:|
+|    Learning Rate           | 0.000178044 |
+|        Batch Size        |   64  |
+| RGB Hidden Layer |   1024 | 
+|  Flow Hidden Layer  |  1024  | 
+
+:bangbang: THE BEST PLOT SHOULD BE ON THE ARCHITCTURE AND RESULTS SECTION, SO I DON'T WHAT FIGURE, IF ANY, SHOULD BE SHOWN HERE
+
+#### DROPOUT
+
+Due to the size of our dataset, the model overfitted rapidly if no dropout was applied. We found out that dropout values ranging from 0.5 to 0.8 enabled the model to learn further. Precisely, the final model obtained used dropout layers of 0.5 in both network streams.
+
+
+### FURTHER EXPLORATION: 
+
+#### DATA AUGMENTATION
 
 We tried to further increase the accuracy by performing some data augmentation, keeping in mind our dataset and data treatment restrictions: 
 * As we were working with Optical Flow, we could not apply Gaussian Blurs or other image manipulation techniques that involved creating artificial motion as the resulting Optical Flow turned out to be completely useless.
@@ -122,7 +176,9 @@ Hence we decided to perform data augmentation by applying a 15% zoom to the vide
 
 Unfortunately, the results obtained did not show an improvement from the best models we had, so further exploration of the technique was discarded.
 
-## END TO END IMPLEMENTATION
+:bangbang: SHOULD WE ALSO EXPLAIN THAT WE ALSO EXPLORED LR SHCEDULERS?
+
+## END TO END SYSTEM
 
 As stated in the introduction, our project goal was not only to train a working classifier but to use it to control a device. In our case, we decided to control our personal computer mapping some hand gestures to actions that will be displayed in a file window on a computer with a Linux OS GUI. 
 
@@ -154,6 +210,9 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 #### ACTION EXECUTION
 
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
+
+## HOW TO RUN THE TRAINING
+
 
 
 ## HOW TO RUN THE PROGRAM
