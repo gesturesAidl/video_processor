@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES 12:13
+# DEVICE CONTROL WITH GESTURES ::12:22::
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -173,14 +173,79 @@ Due to the size of our dataset, the model overfitted rapidly if no dropout was a
 
 #### DATA AUGMENTATION
 
-We tried to further increase the accuracy by performing some data augmentation, keeping in mind our dataset and data treatment restrictions: 
-* As we were working with Optical Flow, we could not apply Gaussian Blurs or other image manipulation techniques that involved creating artificial motion as the resulting Optical Flow turned out to be completely useless.
+We tried to further increase the accuracy by performing some data augmentation on training data. 
+
+Since our dataset (Jester's subset) consists of videos in the form of frames, we could do this data augmentation either on the images or in the videos we make from them. We chose to apply it directly on the images as they are the primary source and it was easier to work with them; the script [frameaug2video.py](https://github.com/gesturesAidl/video_processor/blob/main/scripts/pre-processing/frameaug2video.py) does the augmentation on the training images and creates the augmented videos from them.
+
+We made use of the [imgaug](https://github.com/aleju/imgaug) library to make this image transformations. This library allows to select and stack a [wide range](https://imgaug.readthedocs.io/en/latest/source/overview_of_augmenters.html) of them, including arithmetic (adding noise) and geometric changes, color, flips, pooling, resizing, etc. It was somehow complicated for us to chose a transformation (or a combination of them) since it had to be sufficiently relevant to improve our model but also enough careful to keep the gesture information. Besides of that, some transformations than can augment RGB videos don't change anything in the Optical Flow or even can ruin it.
+
+So, keeping in mind our dataset and data treatment restrictions for our task: 
+* As we were working with Optical Flow, we could not apply blurs, adding noise or other image manipulation techniques that involved creating artificial motion as the resulting Optical Flow turned out to be completely useless.
 * As we had direction-dependant gestures, horizontal flips had to be discarded.
-Hence we decided to perform data augmentation by applying a 15% zoom to the videos and also contrast, saturation and brightness changes.
 
-Unfortunately, the results obtained did not show an improvement from the best models we had, so further exploration of the technique was discarded.
+We carried out a total of three trials in the search of the best transformations to be applied. Each of them includes the processes of data augmentation on training data: making augmented RGB videos from frames, extracting optical flow from them, extraction of augmented RGB and flow features and, finally, combination of previous features with the augmented ones in a single pickle file (one for RGB and another one for Flow) to feed the classifier network and train the model. Therefore, is a significant time-consuming task.
 
-:bangbang: SHOULD WE ALSO EXPLAIN THAT WE ALSO EXPLORED LR SHCEDULERS?
+An scheme of the process is shown in the following picture:
+
+![Data augmentation trial's process](images/pre-processing_augm.png)
+
+To evaluate the trials we were using the final two-stream model and the script [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) with the following hyperparameters (those of the best model):
+
+|Hyperparameter|Value      |
+|:------------:|:---------:|
+|lr            |0.000178044|
+|batch_size    |64         |
+|hidden_rgb    |1024       |
+|hidden_flow   |1024       |
+|dropout       |0.5        |
+|epochs        |100        |
+
+
+Make sure:
+  1.  That the pickle files fed to the model (the ones in **/jester_dataset/features** folder in Google Drive) correspond to the augmented dataset and 
+  2. That in **/jester_dataset/csv**  folder there are the right files from *csv_augm* folder that can be found [here](https://drive.google.com/drive/folders/1T6eHjss8IHV7yr_Z277kyP2_trtpFP2i?usp=sharing) inside **jester_dataset**.
+
+---
+
+##### Data augmentation - Trial I
+
+In the first trial we applied a 15% zoom in the images, followed by random controlled changes in contrast, brightness, hue and saturation (the same for all the frames inside of a video).
+
+The results are as follows:
+![Loss and accuracy for augmentation trial I](images/augm_trial1.png)
+As can be seen, overfitting occurs from epoch 48 approx. There isn’t any improvement due to data augmentation since validation loss is lower than the best values obtained :bangbang: previously :bangbang:, besides the fact that validation accuracy doesn't even reach 0.8.
+
+---
+
+##### Data augmentation - Trial II
+
+As the first trial didn't improve the previous results, in the second one we tried another kind of transformations. We applied a 20% random translation in both directions in the images (the same for all the frames inside of a video).
+
+![Loss and accuracy for augmentation trial II](images/augm_trial2.png)
+Results are way better than those in previous trial. If we take a closer look at validation values:
+![Trial II zoom](images/augm_trial2_zoom.png)
+We see that the model overfits above epoch 53 approx. At this time the validation accuracy reaches a peak value of 0.8325, which is a minor improvement over the previous best value obtained without augmentation that was 0.8312. However, it must be taken into account that, excluding this point, all the previous accuracy values were below 0.825.
+
+---
+
+##### Data augmentation - Trial III
+
+Encouraged by the increase in accuracy in Trial II, we kept the same translation change that seemed to work in the right direction but adding a previous 15% zoom in the images. The results can be viewed below:
+
+![Loss and accuracy for augmentation trial III](images/augm_trial3.png)
+
+Once again overfitting is observed for epochs > 40 and accuracy doesn’t even reach 0.8 one more time. It seems that applying zoom isn’t suitable for augmenting our data.
+
+---
+
+##### Data augmentation - Conclusions
+A series of trials were carried out to have more data to train our network in the hope of obtaining a better global accuracy. Unfortunately, the obtained results did not show an improvement from the best model we already had, so further exploration of the technique was discarded.
+
+Some of the reasons of why data augmentation haven't helped with our task could be:
+  - Not being able to fine-tune the last layers of the *i3d_resnet50_v1_kinetics400* Mxnet model by unfreezing them, only the classifier could be trained. Thus, adding more training videos didn't result in a improvement because the classifier was already fitted for our task. That is also the reason why the augmented model presented overfitting over epoch 40 while the original one didn't.
+  - The pre-trained *i3d_resnet50_v1_kinetics400* Mxnet model took already into account this sort of basic transformations to images (videos) in its ImageNet and Kinetics training, therefore feeding new similar ones didn't contribute to relevant information for our Deep Learning network.
+  - Or, perhaps, we just weren't able to find the right transformations to apply, and introducing this way new information to make a more robust network capable of better inferring.
+
 
 ## END TO END SYSTEM
 
@@ -216,8 +281,43 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
 
-## HOW TO RUN THE TRAINING
+## HOW TO RUN THE MODEL TRAINING
 
+#### Setting the environment in Google Drive
+
+The training was done mainly in Google Colab since it provides a convenient access to GPU, except for a part of the trials for hyperparameter tuning that were executed in a local machine due to known [GPU usage limits](https://research.google.com/colaboratory/faq.html#resource-limits) established by Google in their free platform.
+
+The training code needs access to some files that are located in a Google Drive's folder and are copied to Colab filesystem for the sake of improving access time to data.
+
+So it's necessary to recreate the following folder tree in your own Google Drive's root folder in order to you can execute the Jupyter notebooks scripts:
+
+![Google Drive's tree](images/gdrive_tree.png)
+
+ - Colab Notebooks: copy the notebooks either from repository's **/scripts/training** folder or [download](https://drive.google.com/drive/folders/1T6eHjss8IHV7yr_Z277kyP2_trtpFP2i?usp=sharing). You can paste them directly in this folder or, if you don't want to make a mess with existing notebooks, you can copy the entire folder inside Colab Notebooks or just paste them in another place in Google Drive, it doesn't matter.
+ - jester_dataset: [download](https://drive.google.com/drive/folders/1T6eHjss8IHV7yr_Z277kyP2_trtpFP2i?usp=sharing)  and paste here. This directory **must be** in Google Drive's root folder for the scripts to work.
+   * **csv** folder: contains the csv files with labels, and labeled training and validation data
+   * **features** folder: contains the RGB and flow features (extracted using the Gluon pre-trained model from the videos made from Jester Dataset) as pickle files
+
+#### Running training scripts
+
+At this time you can already run the scripts used in training phase. They make use of GPU to accelerate training, so make sure you have this option on on Google Colab. To enable GPU in your notebook, select the following menu options:
+
+    Runtime / Change runtime type 
+
+and in *Hardware accelerator* select **GPU**.
+
+As said above, these Python scripts use Jupyter notebook format and are as follows:
+
+| File                                                                                                                                                                            |Description                                                                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |---------------------------------------------------------------------------------------------------------------------------------------------- |
+| [dataset.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/dataset.ipynb)                                                                       |_Contains dataset class. Used by main_                                                                                                         |
+| [models.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/models.ipynb)                                                                         |_Contains models class. Used by main_                                                                                                          |
+| [main.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main.ipynb)                                                                             |Basic training (one stream)                                                                                                                    |
+| [main_tune.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_tune.ipynb)                                                                   |Hyperparameter tuning with ray.Tune (one stream)                                                                                               |
+| [main_tune_ASHA.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_tune_ASHA.ipynb)                                                         |Hyperparameter tuning with ray.Tune and ASHA scheduler (one stream)                                                                            |
+| [main_two_stream.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream.ipynb)                                                       |Basic training (two-stream)                                                                                                                    |
+| [main_two_stream_OneCycleLR.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR.ipynb)                                 |Training with OneCycleLR scheduler (two-stream)                                                                                                |
+| [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) |Training with OneCycleLR scheduler (two-stream), saves best accuracy model parameters. **Final model parameters are extracted with this code** |
 
 
 ## HOW TO RUN THE PROGRAM
