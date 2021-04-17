@@ -328,9 +328,27 @@ At that point, we have a bunch of folders with `.jpg` frames inside it. In order
 ## HOW TO EXTRACT OPTICAL FLOW
 In order to get the apparent motion estimation of the objects  we compute the optical flow of every video, and get a new one with its optical flow vectors of the moving objects during the video sequence. To do so, we will use the following script: [optical_flow.py](scripts/preprocessing/optical_flow.py). We need to set the `abs_path_to_videos_folder` variable with the absolute path to our `videos` folder, and `abs_path_to_folder_out`  variable, with the path to the directory where we want to store the optical flow videos. 
 
-## HOW TO EXTRACT FEATURES
-Same procedure to extracte the features from the raw videos than for the optical flow videos.
-!! TODO!!
+## HOW TO EXTRACT FEATURES FROM VIDEOS
+> Notice: It is the same procedure to extracte the features from the raw videos than for the optical flow videos. In this example we explain how to do it with the raw videos.
+
+STEP1: 
+Generate a `videos.txt` file that will contain the list of paths of all videos. To do so, place yourself outside your `videos` folder and run the following command:
+
+```bash
+$ find ./videos -name '*.mp4' > ./videos.txt
+```
+
+STEP2:
+After that, download the script [feat_extract.py](scripts/preprocessing/feat_extract.py) and place it in the same directory where you have your `videos` folder. Create a new folder named `raw_videos_features` in the same directory and type the following command: 
+
+```bash
+$ python ./feat_extract.py --data-list ./videos.txt --model i3d_resnet50_v1_kinetics400 --save-dir ./raw_videos_features --gpu-id -1 --log-name featuresRGB.log &
+```
+This command will generate a `.npy` file for each video of the `videos` folder in the newly created `raw_videos_features` folder. Each `.npy` file contains a numpy array of size [1,2048], the video features.
+
+___
+
+> Repeat this procedure with your optical flow videos in order to extract the optical flow eatures. 
 
 ## HOW TO TRAIN THE MODEL
 
