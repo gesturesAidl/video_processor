@@ -279,7 +279,7 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
 
-## HOW TO RUN THE MODEL TRAINING
+## HOW TO RUN THE TRAINING
 
 #### Setting the environment in Google Drive
 
