@@ -5,10 +5,11 @@ import sys
 import os
 
 workdir = os.getcwd()
-
 sys.path.insert(0, workdir)
+
 from app.config.RabbitTemplate import RabbitTemplate
 from app.controller.Controller import Controller
+
 
 def load_env():
     env_path = Path(workdir + '/env') / '.env'

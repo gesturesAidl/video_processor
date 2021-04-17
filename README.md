@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ‼️12:40‼️
+# DEVICE CONTROL WITH GESTURES ‼️12:59‼️
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -321,6 +321,33 @@ As said above, these Python scripts use Jupyter notebook format and are as follo
 | [main_two_stream.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream.ipynb)                                                       |Basic training (two-stream)                                                                                                                    |
 | [main_two_stream_OneCycleLR.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR.ipynb)                                 |Training with OneCycleLR scheduler (two-stream)                                                                                                |
 | [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) |Training with OneCycleLR scheduler (two-stream), saves best accuracy model parameters. **Final model parameters are extracted with this code** |
+
+# HOW TO
+    
+## HOW TO PREPARE THE DATASET FROM SCRATCH
+
+##### Download Jester Dataset
+In order to download the Jester Dataset, go to its [official web page](https://20bn.com/datasets/jester) and then go to [download section](https://20bn.com/datasets/download). 
+
+> Notice that it is required to create an account in order to be able to download the dataset. 
+
+Download all the files with name `20bn-jester-v1-xx` where xx is a number from 00 to 22 in your computer, all in the same directory. Once you have the 23 files downloaded, extract using:
+```bash
+$ cat 20bn-jester-v1-?? | tar zx 
+```
+This command will create a folder in your computer named `20bn-jester-v1` with **148.092** folders inside, and each one containing an average of 35 images in `.jpg` format (video frames of 3 seconds).
+
+Create a new folder in your computer with name `csv` and download the following files from the same Jestes Dataset downloads page: 
+
+    train.csv
+    validation.csv
+    labels.csv
+    
+Now you have the entire dataset ready and we need to clean it in order to get rid of the classes that are out of the scope of this project (Remember, we are only going to keep and train **9** classes of the 27 the dataset provides).
+
+##### Clean dataset
+
+
 
 
 ## HOW TO RUN THE PROGRAM
