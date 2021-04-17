@@ -348,7 +348,7 @@ This command will generate a `.npy` file for each video of the `videos` folder i
 
 ___
 
-> Repeat this procedure with your optical flow videos in order to extract the optical flow eatures. 
+> Repeat this procedure with your optical flow videos in order to extract the optical flow features. 
 
 ## HOW TO TRAIN THE MODEL
 
