@@ -206,7 +206,7 @@ Make sure:
 
 ---
 
-##### Data augmentation - Trial I
+#### Data augmentation - Trial I
 
 In the first trial we applied a 15% zoom in the images, followed by random controlled changes in contrast, brightness, hue and saturation (the same for all the frames inside of a video).
 
@@ -216,7 +216,7 @@ As can be seen, overfitting occurs from epoch 48 approx. There isn’t any impro
 
 ---
 
-##### Data augmentation - Trial II
+#### Data augmentation - Trial II
 
 As the first trial didn't improve the previous results, in the second one we tried another kind of transformations. We applied a 20% random translation in both directions in the images (the same for all the frames inside of a video).
 
@@ -227,7 +227,7 @@ We see that the model overfits above epoch 53 approx. At this time the validatio
 
 ---
 
-##### Data augmentation - Trial III
+#### Data augmentation - Trial III
 
 Encouraged by the increase in accuracy in Trial II, we kept the same translation change that seemed to work in the right direction but adding a previous 15% zoom in the images. The results can be viewed below:
 
@@ -237,7 +237,7 @@ Once again overfitting is observed for epochs > 40 and accuracy doesn’t even r
 
 ---
 
-##### Data augmentation - Conclusions
+#### Data augmentation - Conclusions
 A series of trials were carried out to have more data to train our network in the hope of obtaining a better global accuracy. Unfortunately, the obtained results did not show an improvement from the best model we already had, so further exploration of the technique was discarded.
 
 Some of the reasons of why data augmentation haven't helped with our task could be:
