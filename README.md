@@ -280,6 +280,51 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
 
 # HOW TO
+    
+## HOW TO PREPARE THE DATASET FROM SCRATCH
+
+##### Download Jester Dataset
+In order to download the Jester Dataset, go to its [official web page](https://20bn.com/datasets/jester) and then go to [download section](https://20bn.com/datasets/download). 
+
+> Notice that it is required to create an account in order to be able to download the dataset. 
+
+Download all the files with name `20bn-jester-v1-xx` where xx is a number from 00 to 22 in your computer, all in the same directory. Once you have the 23 files downloaded, extract using:
+```bash
+$ cat 20bn-jester-v1-?? | tar zx 
+```
+This command will create a folder in your computer named `20bn-jester-v1` with **148.092** folders inside, and each one containing an average of 35 images in `.jpg` format (video frames of 3 seconds).
+
+Create a new folder in your computer with name `csvs` and download the following files from the same Jestes Dataset downloads page: 
+
+    train.csv
+    validation.csv
+    test.csv
+    labels.csv
+    
+Now you have the entire dataset ready and we need to clean it in order to get rid of the classes that are out of the scope of this project (Remember, we are only going to keep and train **9** classes of the 27 the dataset provides).
+
+##### Clean dataset
+
+CLEAN VIDEOS 
+
+Now, we need to separate and remove all the videos from the classes that we won't use. We have 3 sets: train, validation and test. As the test set is not tagged and labeled, we cannot easily discard the videos from the classes we do not use.  So the first step is to remove all the videos from unused classes of the traning and validation set, and separate the test ones.
+
+To do so, we will use the file [delete_unuseful_classes.py](scripts/preprocessing/delete_unuseful_classes.py).
+
+Change variables `abs_path_to_csvs` and `abs_path_to_dataset` in order to add the absolute path to your `csvs` folder and `20bn-jester-v1` respectively. 
+
+This script will only keep the train and validation videos of our useful 9 classes, and move to a new folder named `test_set` all the videos from the test set. This folder will be created in `abs_path_to_dataset_folder` you defined.
+
+CLEAN CSVS
+
+Delete all rows of the downloaded csvs to keep only the useful ones. We will use the file [delete_unuseful_classes_csvs.py](scripts/preprocessing/delete_unuseful_classes_csvs.py). To do so, replace the `path_to_csvs_folder` variable with the absolute path to your downloaded `csvs` folder. This script will create a new folder at the same folder level with name `clean_csvs` with the csv files filtered in order to only keep the labels of the useful classes. 
+
+## HOW TO EXTRACT OPTICAL FLOW
+!! TODO!!
+
+## HOW TO EXTRACT FEATURES
+Same procedure to extracte the features from the raw videos than for the optical flow videos.
+!! TODO!!
 
 ## HOW TO RUN THE TRAINING
 
@@ -318,40 +363,6 @@ As said above, these Python scripts use Jupyter notebook format and are as follo
 | [main_two_stream.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream.ipynb)                                                       |Basic training (two-stream)                                                                                                                    |
 | [main_two_stream_OneCycleLR.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR.ipynb)                                 |Training with OneCycleLR scheduler (two-stream)                                                                                                |
 | [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) |Training with OneCycleLR scheduler (two-stream), saves best accuracy model parameters. **Final model parameters are extracted with this code** |
-
-
-    
-## HOW TO PREPARE THE DATASET FROM SCRATCH
-
-##### Download Jester Dataset
-In order to download the Jester Dataset, go to its [official web page](https://20bn.com/datasets/jester) and then go to [download section](https://20bn.com/datasets/download). 
-
-> Notice that it is required to create an account in order to be able to download the dataset. 
-
-Download all the files with name `20bn-jester-v1-xx` where xx is a number from 00 to 22 in your computer, all in the same directory. Once you have the 23 files downloaded, extract using:
-```bash
-$ cat 20bn-jester-v1-?? | tar zx 
-```
-This command will create a folder in your computer named `20bn-jester-v1` with **148.092** folders inside, and each one containing an average of 35 images in `.jpg` format (video frames of 3 seconds).
-
-Create a new folder in your computer with name `csvs` and download the following files from the same Jestes Dataset downloads page: 
-
-    train.csv
-    validation.csv
-    test.csv
-    labels.csv
-    
-Now you have the entire dataset ready and we need to clean it in order to get rid of the classes that are out of the scope of this project (Remember, we are only going to keep and train **9** classes of the 27 the dataset provides).
-
-##### Clean dataset
-
-Now, we need to separate and remove all the videos from the classes that we won't use. We have 3 sets: train, validation and test. As the test set is not tagged and labeled, we cannot easily discard the videos from the classes we do not use.  So the first step is to remove all the videos from unused classes of the traning and validation set, and separate the test ones.
-
-To do so, we will use the file [delete_unuseful_classes.py](scripts/preprocessing/delete_unuseful_classes.py).
-
-Change variables `abs_path_to_csvs` and `abs_path_to_dataset` in order to add the absolute path to your `csvs` folder and `20bn-jester-v1` respectively. 
-
-This script will only keep the train and validation videos of our useful 9 classes, and move to a new folder named `test_set` all the videos from the test set. This folder will be created in `abs_path_to_dataset_folder` you defined.
 
 ## HOW TO RUN THE PROGRAM
 
