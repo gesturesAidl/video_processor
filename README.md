@@ -164,12 +164,13 @@ The best model we found had a 83.11%, with the following parameters:
 
 :bangbang: THE BEST PLOT SHOULD BE ON THE ARCHITCTURE AND RESULTS SECTION, SO I DON'T WHAT FIGURE, IF ANY, SHOULD BE SHOWN HERE
 
+
 #### DROPOUT
 
 Due to the size of our dataset, the model overfitted rapidly if no dropout was applied. We found out that dropout values ranging from 0.5 to 0.8 enabled the model to learn further. Precisely, the final model obtained used dropout layers of 0.5 in both network streams.
 
 
-#### DATA AUGMENTATION
+### DATA AUGMENTATION
 
 We tried to further increase the accuracy by performing some data augmentation on training data. 
 
