@@ -284,7 +284,7 @@ When the response message is received, if the probability value exceeds a certai
 
 ![DEMOGIF](images/demo_gif.gif)
 
-A full demo of all gestures with the corresponding Linux actions can be seen [here](https://www.youtube.com/watch?v=G59jl27JF2A)
+A full demo of all gestures with the corresponding Linux actions can be seen [here](https://www.youtube.com/watch?v=G59jl27JF2A).
 
 # HOW TO
     
