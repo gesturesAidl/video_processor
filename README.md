@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ‼️20:38‼️ 🕐
+# DEVICE CONTROL WITH GESTURES ‼️18:02‼️ 🕐
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -281,11 +281,6 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
 
-
-![DEMOGIF](images/demo_gif.gif)
-
-A full demo of all gestures with the corresponding Linux actions can be seen [here](https://www.youtube.com/watch?v=G59jl27JF2A).
-
 # HOW TO
     
 ## HOW TO PREPARE THE DATASET FROM SCRATCH
@@ -326,8 +321,12 @@ CLEAN CSVS
 
 Delete all rows of the downloaded csvs to keep only the useful ones. We will use the file [delete_unuseful_classes_csvs.py](scripts/preprocessing/delete_unuseful_classes_csvs.py). To do so, replace the `path_to_csvs_folder` variable with the absolute path to your downloaded `csvs` folder. This script will create a new folder at the same folder level with name `clean_csvs` with the csv files filtered in order to only keep the labels of the useful classes. 
 
+##### Convert video frames to video format
+At that point, we have a bunch of folders with `.jpg` frames inside it. In order to perform all other actions (extract optical flow and extract features), we need to have them all in a video format.  To do so, we will use the following script:  [frame2video.py](scripts/preprocessing/frame2video.py). We have to indicate the folder where the dataset is stored in `abs_path_to_dataset` variable  and run the script.  THis script  will create a new folder in the same directory called `videos` with the same structure than the `20bn-jester-v1` one. But inside each subfolder named with a number, it will contain a single file with extension  `.mp4` which is the video file that has merged the video gesture frames.
+
+
 ## HOW TO EXTRACT OPTICAL FLOW
-!! TODO!!
+In order to get the apparent motion estimation of the objects  we compute the optical flow of every video, and get a new one with its optical flow vectors of the moving objects during the video sequence. To do so, we will use the following script: [optical_flow.py](scripts/preprocessing/optical_flow.py). We need to set the `abs_path_to_videos_folder` variable with the absolute path to our `videos` folder, and `abs_path_to_folder_out`  variable, with the path to the directory where we want to store the optical flow videos. 
 
 ## HOW TO EXTRACT FEATURES
 Same procedure to extracte the features from the raw videos than for the optical flow videos.
