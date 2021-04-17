@@ -5,18 +5,26 @@ import logging
 import os
 
 '''
-EXTRACT OPTICAL FLOW FEATURES FROM VIDEOS
+EXTRACT OPTICAL FLOW FROM VIDEOS
 '''
 
-# Output floder. If not exists, create
-folderOut = "/home/gestures_aidl/optical_flow/"
+abs_path_to_videos_folder = "..." + "/videos/"
+abs_path_to_folder_out = "..."
+folderOut = abs_path_to_folder_out + "/optical_flow/"
+
+# Create output folder if not exists
 if not os.path.exists(folderOut):
     os.makedirs(folderOut)
 
-# Get video list information - videos.txt = file containing full path for each video to process, one per line.
-video_list = "/home/gestures_aidl/scripts/txt/videos.txt"
-f = open(video_list, 'r')
-video_list = f.readlines()
+# Get video list information containing full path for each video to process.
+video_list = []
+
+video_dirs_list = os.listdir(abs_path_to_videos_folder)
+for dir_name in os.listdir(abs_path_to_videos_folder):
+    onlyfiles = [f for f in os.listdir(abs_path_to_videos_folder + dir_name) if os.path.isfile(os.path.join(abs_path_to_videos_folder + dir_name, f))]
+    if len(onlyfiles) == 1:
+        video_list = abs_path_to_videos_folder + dir_name + "/" + onlyfiles[0]
+
 
 # Init logging
 logging.basicConfig(filename='./logs/optical_flow.log')

@@ -333,7 +333,7 @@ Delete all rows of the downloaded csvs to keep only the useful ones. We will use
 Same procedure to extracte the features from the raw videos than for the optical flow videos.
 !! TODO!!
 
-## HOW TO RUN THE TRAINING
+## HOW TO TRAIN THE MODEL
 
 #### Setting the environment in Google Drive
 
