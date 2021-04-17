@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ::12:22::
+# DEVICE CONTROL WITH GESTURES ‼️12:40‼️
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -213,6 +213,7 @@ In the first trial we applied a 15% zoom in the images, followed by random contr
 
 The results are as follows:
 ![Loss and accuracy for augmentation trial I](images/augm_trial1.png)
+
 As can be seen, overfitting occurs from epoch 48 approx. There isn’t any improvement due to data augmentation since validation loss is lower than the best values obtained :bangbang: previously :bangbang:, besides the fact that validation accuracy doesn't even reach 0.8.
 
 ---
@@ -222,8 +223,10 @@ As can be seen, overfitting occurs from epoch 48 approx. There isn’t any impro
 As the first trial didn't improve the previous results, in the second one we tried another kind of transformations. We applied a 20% random translation in both directions in the images (the same for all the frames inside of a video).
 
 ![Loss and accuracy for augmentation trial II](images/augm_trial2.png)
+
 Results are way better than those in previous trial. If we take a closer look at validation values:
 ![Trial II zoom](images/augm_trial2_zoom.png)
+
 We see that the model overfits above epoch 53 approx. At this time the validation accuracy reaches a peak value of 0.8325, which is a minor improvement over the previous best value obtained without augmentation that was 0.8312. However, it must be taken into account that, excluding this point, all the previous accuracy values were below 0.825.
 
 ---
@@ -281,7 +284,7 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
 
-## HOW TO RUN THE MODEL TRAINING
+## HOW TO RUN THE TRAINING
 
 #### Setting the environment in Google Drive
 
