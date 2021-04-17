@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES
+# DEVICE CONTROL WITH GESTURES 12:13
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -49,6 +49,10 @@ As the goal of our project was to control basic functionalities of a computer, w
 |  Turning Hand Clockwise  |    3126 |385 |
 
 The first two classes, Doing Other Things and No Gesture, were added to our list of classes in order to have basic states when we are not trying to control the computer.
+
+
+The Jester test set provided is unlabeled, as the purpose of the dataset is to be a competition. Hence, as the end goal of the classifier is to be used with user inputs from a webcam, we decided to perform the test phase with videos created by us on the end to end system.
+
 
 
 
@@ -102,7 +106,7 @@ To decide which method to use we explored the number of parameters, to try to mi
 
 #### FIRST APPROACH: RGB VIDEOS
 
-The first way we explored to address the classification task was using only the extracted features from the RGB videos to classify them. After some training and hyperparameter tuning, the obtained accuracy was around 70%, which was still far from our desired accuracy values. To try to understand better where the model was struggling, we computed the confusion matrix of the predictions and some revealing results where found: the model encountered difficulties when differentiating the gestures that are the same movement but in different directions (i.e. Swiping left/Swiping right).
+The first way we explored to address the classification task was using only the extracted features from the RGB videos to classify them. After some training and hyperparameter tuning, the obtained accuracy was around 70%, which was still far from our desired accuracy values. To try to understand better where the model was struggling, we computed the confusion matrix of the predictions and some revealing results where found: the model encountered difficulties when differentiating the gestures that are the same movement but in different directions (i.e. Swiping left/Swiping right) and also differentiating similar gestures which differ from one another mainly by the movement (Stop Sign/Turning Hand Clockwise).
 
 To address that problem, we thought that we could capture better the temporal and directional information by computing the Optical Flow of the videos and extract features from them.
 
