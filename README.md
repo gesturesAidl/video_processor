@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ‼️13:44‼️
+# DEVICE CONTROL WITH GESTURES ‼️14:05‼️
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
