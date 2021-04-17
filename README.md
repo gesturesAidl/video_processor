@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ‼️14:05‼️
+# DEVICE CONTROL WITH GESTURES ‼️18:02‼️ 🕐
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -135,7 +135,7 @@ A detailed accuracy comparison between the two approaches can be seen on the tab
 
 #### THIRD APPROACH: TWO STREAM (RGB AND OPTICAL FLOW VIDEOS)
 
-From the First and second approaches, we decided to use a model with two streams, one for RGB videos to help with the general classification task and the other one for the Optical Flow to address the confusion problem, and combine them as stated on the the previous section. Doing so doubles the amount of data and computer time/cost but was done in the hope of the model being able to keep the best parts of both approaches and yield better results. As it can be observed on the figure, our hypothesis was true and the network managed to learn appropriately from the two streams of data and improved the overall accuracy, which went from 70% of the RGB videos and 57% of the Optical Flow ones up to +80%, a significant increase. 
+From the first and second approaches, we decided to use a model with two streams, following the ideas of the **Quo Vadis, Action Recognition?** [paper](https://arxiv.org/pdf/1705.07750.pdf): We use one stream for RGB videos to help with the general classification task and the other one for the Optical Flow to address the confusion problem, and combine them as stated on the the previous section. Doing so doubles the amount of data and computer time/cost but was done in the hope of the model being able to keep the best parts of both approaches and yield better results. As it can be observed on the figure, our hypothesis was true and the network managed to learn appropriately from the two streams of data and improved the overall accuracy, which went from 70% of the RGB videos and 57% of the Optical Flow ones up to +80%, a significant increase. 
 
 
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/rgb_flow_80.jpg?raw=true)
