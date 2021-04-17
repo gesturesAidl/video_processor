@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ‼️20:15‼️ 🕐
+# DEVICE CONTROL WITH GESTURES ‼️20:38‼️ 🕐
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -280,6 +280,11 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 #### ACTION EXECUTION
 
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
+
+
+![DEMOGIF](images/demo_gif.gif)
+
+A full demo of all gestures with the corresponding Linux actions can be seen [here](https://www.youtube.com/watch?v=G59jl27JF2A)
 
 # HOW TO
     
