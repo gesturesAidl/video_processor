@@ -223,6 +223,7 @@ As the first trial didn't improve the previous results, in the second one we tri
 ![Loss and accuracy for augmentation trial II](images/augm_trial2.png)
 Results are way better than those in previous trial. If we take a closer look at validation values:
 ![Trial II zoom](images/augm_trial2_zoom.png)
+
 We see that the model overfits above epoch 53 approx. At this time the validation accuracy reaches a peak value of 0.8325, which is a minor improvement over the previous best value obtained without augmentation that was 0.8312. However, it must be taken into account that, excluding this point, all the previous accuracy values were below 0.825.
 
 ---
