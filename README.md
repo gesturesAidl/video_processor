@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ‼️12:59‼️
+# DEVICE CONTROL WITH GESTURES ‼️13:44‼️
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -169,13 +169,11 @@ The best model we found had a 83.11%, with the following parameters:
 Due to the size of our dataset, the model overfitted rapidly if no dropout was applied. We found out that dropout values ranging from 0.5 to 0.8 enabled the model to learn further. Precisely, the final model obtained used dropout layers of 0.5 in both network streams.
 
 
-### FURTHER EXPLORATION: 
-
 #### DATA AUGMENTATION
 
 We tried to further increase the accuracy by performing some data augmentation on training data. 
 
-Since our dataset (Jester's subset) consists of videos in the form of frames, we could do this data augmentation either on the images or in the videos we make from them. We chose to apply it directly on the images as they are the primary source and it was easier to work with them; the script [frameaug2video.py](https://github.com/gesturesAidl/video_processor/blob/main/scripts/pre-processing/frameaug2video.py) does the augmentation on the training images and creates the augmented videos from them.
+Since our dataset (Jester's subset) consists of videos in the form of frames, we could do this data augmentation either on the images or in the videos we make from them. We chose to apply it directly on the images as they are the primary source and it was easier to work with them; the script [frameaug2video.py](https://github.com/gesturesAidl/video_processor/blob/main/scripts/augmentation/frameaug2video.py) does the augmentation on the training images and creates the augmented videos from them.
 
 We made use of the [imgaug](https://github.com/aleju/imgaug) library to make this image transformations. This library allows to select and stack a [wide range](https://imgaug.readthedocs.io/en/latest/source/overview_of_augmenters.html) of them, including arithmetic (adding noise) and geometric changes, color, flips, pooling, resizing, etc. It was somehow complicated for us to chose a transformation (or a combination of them) since it had to be sufficiently relevant to improve our model but also enough careful to keep the gesture information. Besides of that, some transformations than can augment RGB videos don't change anything in the Optical Flow or even can ruin it.
 
@@ -187,7 +185,7 @@ We carried out a total of three trials in the search of the best transformations
 
 An scheme of the process is shown in the following picture:
 
-![Data augmentation trial's process](images/pre-processing_augm.png)
+![Data augmentation trial's process](images/preprocessing_augm.png)
 
 To evaluate the trials we were using the final two-stream model and the script [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) with the following hyperparameters (those of the best model):
 
@@ -213,7 +211,6 @@ In the first trial we applied a 15% zoom in the images, followed by random contr
 
 The results are as follows:
 ![Loss and accuracy for augmentation trial I](images/augm_trial1.png)
-
 As can be seen, overfitting occurs from epoch 48 approx. There isn’t any improvement due to data augmentation since validation loss is lower than the best values obtained :bangbang: previously :bangbang:, besides the fact that validation accuracy doesn't even reach 0.8.
 
 ---
@@ -223,10 +220,8 @@ As can be seen, overfitting occurs from epoch 48 approx. There isn’t any impro
 As the first trial didn't improve the previous results, in the second one we tried another kind of transformations. We applied a 20% random translation in both directions in the images (the same for all the frames inside of a video).
 
 ![Loss and accuracy for augmentation trial II](images/augm_trial2.png)
-
 Results are way better than those in previous trial. If we take a closer look at validation values:
 ![Trial II zoom](images/augm_trial2_zoom.png)
-
 We see that the model overfits above epoch 53 approx. At this time the validation accuracy reaches a peak value of 0.8325, which is a minor improvement over the previous best value obtained without augmentation that was 0.8312. However, it must be taken into account that, excluding this point, all the previous accuracy values were below 0.825.
 
 ---
@@ -284,7 +279,7 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
 
-## HOW TO RUN THE TRAINING
+## HOW TO RUN THE MODEL TRAINING
 
 #### Setting the environment in Google Drive
 
@@ -292,12 +287,12 @@ The training was done mainly in Google Colab since it provides a convenient acce
 
 The training code needs access to some files that are located in a Google Drive's folder and are copied to Colab filesystem for the sake of improving access time to data.
 
-So it's necessary to recreate the following folder tree in your own Google Drive's root folder in order to you can execute the Jupyter notebooks scripts:
+So it's necessary to recreate the following folder tree **in your own** Google Drive's root folder in order to you can execute the Jupyter notebooks scripts:
 
 ![Google Drive's tree](images/gdrive_tree.png)
 
- - Colab Notebooks: copy the notebooks either from repository's **/scripts/training** folder or [download](https://drive.google.com/drive/folders/1T6eHjss8IHV7yr_Z277kyP2_trtpFP2i?usp=sharing). You can paste them directly in this folder or, if you don't want to make a mess with existing notebooks, you can copy the entire folder inside Colab Notebooks or just paste them in another place in Google Drive, it doesn't matter.
- - jester_dataset: [download](https://drive.google.com/drive/folders/1T6eHjss8IHV7yr_Z277kyP2_trtpFP2i?usp=sharing)  and paste here. This directory **must be** in Google Drive's root folder for the scripts to work.
+ - Colab Notebooks: copy the notebooks from repository's **/scripts/training** folder. You can paste them directly in this folder or, if you don't want to make a mess with existing notebooks, you can copy the entire folder inside Colab Notebooks or just paste them in another place in Google Drive, it doesn't matter.
+ - jester_dataset: download from [here](https://drive.google.com/drive/folders/1T6eHjss8IHV7yr_Z277kyP2_trtpFP2i?usp=sharing)  and paste the directory in your Google Drive's root folder for the scripts to work.
    * **csv** folder: contains the csv files with labels, and labeled training and validation data
    * **features** folder: contains the RGB and flow features (extracted using the Gluon pre-trained model from the videos made from Jester Dataset) as pickle files
 
@@ -321,6 +316,7 @@ As said above, these Python scripts use Jupyter notebook format and are as follo
 | [main_two_stream.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream.ipynb)                                                       |Basic training (two-stream)                                                                                                                    |
 | [main_two_stream_OneCycleLR.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR.ipynb)                                 |Training with OneCycleLR scheduler (two-stream)                                                                                                |
 | [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) |Training with OneCycleLR scheduler (two-stream), saves best accuracy model parameters. **Final model parameters are extracted with this code** |
+
 
 # HOW TO
     
