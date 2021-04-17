@@ -36,17 +36,17 @@ The data we used to train and validate our model was from the [Jester Dataset](h
 
 As the goal of our project was to control basic functionalities of a computer, we decided to reduce the number of classes and to choose 9 gestures which made more sense from a control point of view. The used classes and the number of samples of each one are:
 
-|          Gesture         | Samples |
-|:------------------------:|:-------:|
-|    Doing Other Things    |  12416  |
-|        No Gesture        |   5344  |
-| Sliding Two Fingers Down |   5410  | 
-|  Sliding Two Fingers Up  |   5262  | 
-|         Stop Sign        |   5413  | 
-|       Swiping Left       |   5160  | 
-|       Swiping Right      |   5066  | 
-|         Thumb Up         |   5457  | 
-|  Turning Hand Clockwise  |   3980  |
+|          Gesture         | Train Samples | Validation Samples |
+|:------------------------:|:-------:|:--------:|
+|    Doing Other Things    |  9592 |1468|
+|        No Gesture        |   4287  |533|
+| Sliding Two Fingers Down |   4348  | 531|
+|  Sliding Two Fingers Up  |   4219  | 522|
+|         Stop Sign        |   4337  | 536|
+|       Swiping Left       |   4162  | 494|
+|       Swiping Right      |    4084 | 486|
+|         Thumb Up         |   4373  | 539|
+|  Turning Hand Clockwise  |    3126 |385 |
 
 The first two classes, Doing Other Things and No Gesture, were added to our list of classes in order to have basic states when we are not trying to control the computer.
 
@@ -70,7 +70,7 @@ We computed the dense Optical Flow with the Farneback’s algorithm implementati
 In order to extract features from the videos (both RGB and Optical Flow) we used an Inflated 3D Network (I3D), as it is a widely used network for video classification, able to learn spatiotemporal information from the videos. In our case, the chosen I3D had weight initialization from a ResNet50 network trained on Imagenet, and was also pre-trained on the action recognition dataset Kinetics-400, since it’s an state-of-the-art model with a good balance between accuracy and computational requirements. The model is provided by [GluonCV](https://cv.gluon.ai/) and runs on MXnet.
 
 ### Classifier Neural Network
-The RGB and the Optical Flow videos are processed by the previously mentioned I3D network, and features for both of them are obtained and go through a [neural network architecture with two streams](https://github.com/gesturesAidl/video_processor/blob/main/app/GesturesAnalyzer/Classifier2stream.py), which was designed considering the [different options](#feature-joinig) of how to combine the features. Briefly, both features go through their respective branches of the neural network and the output logits are added up, go through a LogSoftMax layer whose output are the final probabilities. These network was trained and [hyperparameter-tuned](#hyperparameter-tuning) to yield the final results: 
+The RGB and the Optical Flow videos are processed by the previously mentioned I3D network, and features for both of them are obtained and go through a [neural network architecture with two streams](https://github.com/gesturesAidl/video_processor/blob/main/app/GesturesAnalyzer/Classifier2stream.py), which was designed considering the [different options](#feature-joinig) of how to combine the features. Briefly, both features go through their respective branches of the neural network and the output logits are added up, go through a LogSoftMax layer whose output are the final probabilities. This network was trained and [hyperparameter-tuned](#hyperparameter-tuning) to yield the final results: 
 
 :bangbang: PLOT OF THE BEST RESULTS
 
@@ -110,7 +110,7 @@ To address that problem, we thought that we could capture better the temporal an
 
 #### SECOND APPROACH: OPTICAL FLOW VIDEOS
 
-After training the model with only the Optical Flow features, following the same steps that had been done during the first approach, it was observed that while the accuracy of the whole model diminished, as the model could not classify well the videos with little movement (Stop Sign, Thumb Up), the confusion between the troublesome gestures was reduced, confirming the hypothesis that better directional information was captured.
+After training the model with only the Optical Flow features, following the same steps that had been done during the first approach, it was observed that while the accuracy of the whole model diminished, as the model could not classify well the videos with little movement (Stop Sign, Thumb Up). However, the confusion between the troublesome gestures was reduced, confirming the hypothesis that better directional information was captured.
 
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/flow.png?raw=true)
 
@@ -201,7 +201,8 @@ Briefly, the way the whole system works is as follows: videos are captured in ou
 
 #### VIDEO CAPTURING
 
-To be consistent with the training data, the videos processed will be 3 seconds long and captured at 12 fps. If we just recorded videos every 3 seconds, we may encounter the problem that a gesture performance is split between two, causing problems with its identification. To address that problem we decided to overlap partially  the videos processed, specifically a 50% overlap. Hence, each frame is going to be used in two different videos. Also, to avoid unnecessarily sending the data twice, we capture 1.5 second videos and send them to the Cloud, where they are going to be joined appropriately.
+To be consistent with the training data, the videos processed will be 3 seconds long, captured at 12 fps and of the typical Jestser Dataset size ``[170,100]``. As once we send the message containing a video it waits for a response, there is approximately one second (the time it usually takes to process the video) where the webcam is not recording. In order to help the user with the gesture timing, we added a dot on the screen that will be green if the camera is recording, and red if not. 
+
 
 #### VIDEO PROCESSING
 
