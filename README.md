@@ -333,18 +333,24 @@ $ cat 20bn-jester-v1-?? | tar zx
 ```
 This command will create a folder in your computer named `20bn-jester-v1` with **148.092** folders inside, and each one containing an average of 35 images in `.jpg` format (video frames of 3 seconds).
 
-Create a new folder in your computer with name `csv` and download the following files from the same Jestes Dataset downloads page: 
+Create a new folder in your computer with name `csvs` and download the following files from the same Jestes Dataset downloads page: 
 
     train.csv
     validation.csv
+    test.csv
     labels.csv
     
 Now you have the entire dataset ready and we need to clean it in order to get rid of the classes that are out of the scope of this project (Remember, we are only going to keep and train **9** classes of the 27 the dataset provides).
 
 ##### Clean dataset
 
+Now, we need to separate and remove all the videos from the classes that we won't use. We have 3 sets: train, validation and test. As the test set is not tagged and labeled, we cannot easily discard the videos from the classes we do not use.  So the first step is to remove all the videos from unused classes of the traning and validation set, and separate the test ones.
 
+To do so, we will use the file [delete_unuseful_classes.py](scripts/preprocessing/delete_unuseful_classes.py).
 
+Change variables `abs_path_to_csvs` and `abs_path_to_dataset` in order to add the absolute path to your `csvs` folder and `20bn-jester-v1` respectively. 
+
+This script will only keep the train and validation videos of our useful 9 classes, and move to a new folder named `test_set` all the videos from the test set. This folder will be created in @{abs_path_to_dataset_folder}.
 
 ## HOW TO RUN THE PROGRAM
 
