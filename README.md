@@ -279,6 +279,8 @@ Once the videos are received on Google Cloud, their Optical Flow is computed and
 
 When the response message is received, if the probability value exceeds a certain threshold the corresponding action is executed. We use thresholds because as we are performing real actions on the computer, we want the model to be confident enough on the predictions.
 
+# HOW TO
+
 ## HOW TO RUN THE TRAINING
 
 #### Setting the environment in Google Drive
@@ -318,7 +320,6 @@ As said above, these Python scripts use Jupyter notebook format and are as follo
 | [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) |Training with OneCycleLR scheduler (two-stream), saves best accuracy model parameters. **Final model parameters are extracted with this code** |
 
 
-# HOW TO
     
 ## HOW TO PREPARE THE DATASET FROM SCRATCH
 
@@ -350,7 +351,7 @@ To do so, we will use the file [delete_unuseful_classes.py](scripts/preprocessin
 
 Change variables `abs_path_to_csvs` and `abs_path_to_dataset` in order to add the absolute path to your `csvs` folder and `20bn-jester-v1` respectively. 
 
-This script will only keep the train and validation videos of our useful 9 classes, and move to a new folder named `test_set` all the videos from the test set. This folder will be created in @{abs_path_to_dataset_folder}.
+This script will only keep the train and validation videos of our useful 9 classes, and move to a new folder named `test_set` all the videos from the test set. This folder will be created in `abs_path_to_dataset_folder` you defined.
 
 ## HOW TO RUN THE PROGRAM
 
