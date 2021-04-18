@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ‼️13:21‼️ 🕐
+# DEVICE CONTROL WITH GESTURES ‼️21:25‼️ 🕐
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -117,21 +117,63 @@ To decide which method to use we explored the number of parameters, to try to mi
 
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/feature_join.png?raw=true)
 
+
 ### MODEL IMPROVEMENTS
 
 #### FIRST APPROACH: RGB VIDEOS
 
-The first way we explored to address the classification task was using only the extracted features from the RGB videos to classify them. After some training and hyperparameter tuning, the obtained accuracy was around 70%, which was still far from our desired accuracy values. To try to understand better where the model was struggling, we computed the confusion matrix of the predictions and some revealing results where found: the model encountered difficulties when differentiating the gestures that are the same movement but in different directions (i.e. Swiping left/Swiping right) and also differentiating similar gestures which differ from one another mainly by the movement (Stop Sign/Turning Hand Clockwise).
+The first way we explored to address the classification task was using only the extracted features from the RGB videos to classify them. We designed a classifier neural network made of two fully connected layers with a ReLu activation in between. As loss function we selected Cross-Entropy Loss since we're solving a classification task:
+
+![One-stream classifier NN](/images/1s_nn.png)
+
+The first training tests showed that the model overfitted quickly after a few epochs, therefore we added a dropout layer to improve the results.
+
+Next, we performed some [basic trainings](scripts/training/main.ipynb), changing the value of hyperparameters to see how the model performed. As we had already chosen the activation function (ReLu) and the Loss function (Cross-Entropy Loss), the remainder hyperparameters to be defined were:
+ - Learning rate
+ - Batch size
+ - Number of hidden layers
+ - Dropout
+ - Number of epochs
+ - Optimizer
+
+With respect to the **optimizer**, we ran trainings with SGD and Adam to compare the results obtained. An example is given below:
+
+![Adam vs SGD](/images/adam_vs_sgd.png)
+
+	 · Optimizers: ADAM, SGD (momentum=0.9, nesterov=True)
+	 · Learning rate = 1e-3
+	 · Batch size = 64			
+	 · Number of hidden layers = 1024
+	 · Dropout = 0.5
+	 · Number of epochs = 22
+
+As it's clearly seen in the graphs, for the same number of epochs Adam obtained better values in loss and accuracy compared to SGD, although with SGD the curves were smooth and were presumed to get better in the long run. Besides, using Adam made the model overfit before than using SGD, so special care must be taken in choosing dropout value.
+
+At this point we did some [hyperparameter tuning](#hyperparameter-tuning) to select the best values for our network.
+
+After some training and hyperparameter tuning, the obtained accuracy was around 70%, which was still far from our desired accuracy values. To try to understand better where the model was struggling, we computed the confusion matrix of the predictions and some revealing results where found: the model encountered difficulties when differentiating the gestures that are the same movement but in different directions (i.e. Swiping left/Swiping right) and also differentiating similar gestures which differ from one another mainly by the movement (Stop Sign/Turning Hand Clockwise):
+
+
+![RGB one-stream graphs](images/rgb.png)
+
+	 · Learning rate = 1e-3				· Dropout = 0.5
+	 · Batch size = 32					· Number of epochs = 25
+	 · Number of hidden layers = 512	· Optimizer: Adam
 
 To address that problem, we thought that we could capture better the temporal and directional information by computing the Optical Flow of the videos and extract features from them.
 
-![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/rgb.png?raw=true)
 
 #### SECOND APPROACH: OPTICAL FLOW VIDEOS
 
-After training the model with only the Optical Flow features, following the same steps that had been done during the first approach, it was observed that while the accuracy of the whole model diminished, as the model could not classify well the videos with little movement (Stop Sign, Thumb Up). However, the confusion between the troublesome gestures was reduced, confirming the hypothesis that better directional information was captured.
+After training the model with only the Optical Flow features (following the same steps that had been done during the first approach), it was observed that the accuracy of the whole model diminished, as the model could not classify well the videos with little movement (Stop Sign, Thumb Up). However, the confusion between the troublesome gestures was reduced, confirming the hypothesis that better directional information was captured:
 
-![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/flow.png?raw=true)
+ ![Flow one-stream graphs](images/flow.png)
+
+	 · Learning rate = 3e-4				· Dropout = 0.5
+	 · Batch size = 128					· Number of epochs = 25
+	 · Number of hidden layers = 2048	· Optimizer: Adam
+
+***Note** : For this training it was used the same [Colab notebook](scripts/training/main.ipynb) than for the first approach, the only change that must be done is loading Flow features pickle file instead of RGB one.* 
 
 A detailed accuracy comparison between the two approaches can be seen on the table below:
 
@@ -150,25 +192,9 @@ A detailed accuracy comparison between the two approaches can be seen on the tab
 
 #### THIRD APPROACH: TWO STREAM (RGB AND OPTICAL FLOW VIDEOS)
 
-From the first and second approaches, we decided to use a model with two streams, following the ideas of the **Quo Vadis, Action Recognition?** [paper](https://arxiv.org/pdf/1705.07750.pdf): We use one stream for RGB videos to help with the general classification task and the other one for the Optical Flow to address the confusion problem, and combine them as stated on the the previous section. Doing so doubles the amount of data and computer time/cost but was done in the hope of the model being able to keep the best parts of both approaches and yield better results. As it can be observed on the figure, our hypothesis was true and the network managed to learn appropriately from the two streams of data and improved the overall accuracy, which went from 70% of the RGB videos and 57% of the Optical Flow ones up to +80%, a significant increase. 
+From the first and second approaches, we decided to use a model with two streams, following the ideas of the **Quo Vadis, Action Recognition?** [paper](https://arxiv.org/pdf/1705.07750.pdf): we used one stream for RGB videos (*spatial stream*) to help with the general classification task and the other one for the Optical Flow (*temporal stream*) to address the confusion problem, and combine them as stated on the [previous section](#feature-joining). Doing so doubles the amount of data and computer time/cost but was done in the hope of the model being able to keep the best parts of both approaches and yield better results.
 
-
-![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/rgb_flow_80.jpg?raw=true)
-
-### HYPERPARAMETER TUNING
-
-To try to get the best results possible, an extensive hyperparameter tuning was performed (note that it was done in all the three approaches described on the previous section). In the most relevant approach, the third one, the tuned parameters were: 
-
-|          Parameter         | Value Range |
-|:--------------------------:|:-----:|
-|    Learning Rate           | loguniform(log(1e-4), log(1e-2)) |
-|        Batch Size        |   choice(8, 16, 32, 64, 128, 256)  |
-| RGB Hidden Layer |   choice(128, 256, 512, 1024, 2048) | 
-|  Flow Hidden Layer  |  choice(128, 256, 512, 1024, 2048)  | 
-
-:bangbang: WE SHOULD ADD A LITTLE EXPLANATION OF THE SCHEDUELRS OR SEARCH ALGORITHM USED, I DON'T REMEMBER IT WELL ENOUGH TO EXPLAIN THEM. ENRIQUE SEND HELP
-
-The best model we found had a 83.11%, with the following parameters:
+In the following trainings we used the best hyperparameters obtained as explained in the [hyperparameter section](#hyperparameter-tuning), and applied them symmetrically to both streams (using this [Colab notebook](scripts/training/main_two_stream.ipynb)):
 
 |          Parameter         | Value Range |
 |:--------------------------:|:-----:|
@@ -177,10 +203,114 @@ The best model we found had a 83.11%, with the following parameters:
 | RGB Hidden Layer |   1024 | 
 |  Flow Hidden Layer  |  1024  | 
 
-:bangbang: THE BEST PLOT SHOULD BE ON THE ARCHITCTURE AND RESULTS SECTION, SO I DON'T WHAT FIGURE, IF ANY, SHOULD BE SHOWN HERE
+In the first two-stream training tests we continued using Adam optimizer and got these results with dropout = 0.5 and 20 epochs:
+
+![Two stream dropout 0.5 results](images/two_stream_trial3.png)
+
+As it can be observed on the figure, our hypothesis was true and the network managed to learn appropriately from the two streams of data and improved the overall accuracy, which went from 70% of the RGB videos and 57% of the Optical Flow ones up to +80%, a significant increase.
+
+##### Increasing dropout
+
+Then, we tried to explore by increasing dropout value making thus possible to increase the number of epochs likewise. An execution example can be seen below, with dropout = 0.75 and 100 epochs:
+
+  ![Two stream dropout 0.75 results](images/two_stream_trial6.png)
+Taking a look at validation loss' values it can be seen that overfitting occurs for epoch > 70.
+
+##### Adding a scheduler
+
+At this point we wanted to explore if we could improve a bit more the training by using an scheduler, and we chose [OneCycleLR](https://pytorch.org/docs/stable/optim.html?highlight=onecyclelr#torch.optim.lr_scheduler.OneCycleLR), since it uses a interesting learning rate policy (going from an initial learning rate to some maximum learning rate and then from that maximum learning rate to some minimum learning rate much lower than the initial learning rate).
+
+Our first attempt wasn't successful, as the combination of Adam + OneCycleLR showed to be unsuccessful, at least with the hyperparameters used. Overfitting is observed from right the beginning (with dropout = 0.7):
+
+![Two stream OneCycleLR Adam results](images/two_stream_trial9_Adam.png)
+
+Then we switched back to SGD optimizer expecting that it was more compatible with OneCycleLR scheduler, supposition that turned to be right. These are the loss and accuracy graphs obtained with a dropout value of 0.5 (using this [Colab notebook](scripts/training/main_two_stream_OneCycleLR)):
+
+  ![Two stream results](images/two_stream_trial11_best_model.png)
+
+Zooming the graph to detect overfitting showed than overfitting began approximately after epoch 86, so we saved model_state_dict at epoch 81 to be used to infer gestures from video in the app implementation:
+
+  ![Two stream results](images/two_stream_trial11_best_model_zoom.png)
+
+##### Final results
+
+In summary, the best model we found achieved a 83.11% accuracy and was obtained using **SGD optimizer**, **OneCycleLR scheduler** and the following hyperparameters:
+
+| Hyperparameter     | Value       |
+| :----------------: | :---------: |
+| Learning Rate      | 0.000178044 |
+| Batch Size         | 64          |
+| RGB Hidden Layer   | 1024        | 
+| Flow Hidden Layer  | 1024        | 
+| Dropout            | 0.5         |
+                  
+
+ However, it must be noted that, although there is an increase in the overall accuracy with the two-stream model, the [final individual accuracies](#classifier-neural-network) are an intermediate value between those of the [first and the second approaches](#second-approach-optical-flow-videos), in such a way that 'static' classes (as 'thumb up') get worse compared to the RGB model, while 'dynamic' ones (as sliding or swiping) get better.
+
+### HYPERPARAMETER TUNING
+
+To try to get the best results possible, an extensive hyperparameter tuning was performed.
+
+To do this we used [Ray Tune](https://docs.ray.io/en/master/tune/index.html), a convenient Python library for experiment execution and hyperparameter tuning at any scale.
+
+As choosing dropout value depends on the optimizer used and number of epochs, we used **Tune** to determine only the following hyperparameters:
+ - Learning rate
+ - Batch size
+ - Number of hidden layers
+
+The range of values tuned for each hyperparameter was as follows:
+
+|Parameter         | Value Range               |
+|:---------------: | :-----------------------: |
+|Learning Rate     | (1e-4 , 1e-2)             |
+|Batch Size        | 8, 16, 32, 64, 128, 256   |
+|Hidden Layer size | 128, 256, 512, 1024, 2048 | 
+
+#### ASHA scheduler
+
+As scheduler we chose [ASHA](https://docs.ray.io/en/master/tune/api_docs/schedulers.html#tune-scheduler-hyperband) (Asynchronous HyperBand Scheduler), since this implementation provides better parallelism and avoids straggler issues during eliminations compared to the original version of HyperBand. We wanted to leverage its ability to perform *early stopping* (stop automatically bad trials), although at the end we didn't manage to make it work. Check code [here](scripts/training/main_tune_ASHA.ipynb).
+
+First of all, we ran it only with **RGB videos** (first approach) with 50 samples (number of trials), with Adam optimizer and a dropout = 0.5 and 20 epochs as fixed values. The best values (*) found were:
+ - 'lr': 0.00023202085501207852
+ - 'batch_size': 64,
+ - 'hidden_size': 1024
+
+obtaining
+- Best trial final validation loss: 0.6756827401560407
+- Best trial final validation accuracy: 0.7360640168190002
+
+#### ASHA scheduler + HyperOptSearch
+
+The last step to optimize results was changing from default Ray Tune search algorithm (random and grid search) to [HyperOptSearch](https://docs.ray.io/en/master/tune/api_docs/suggestion.html#tune-hyperopt). This algorithm uses the Tree-structured Parzen Estimators algorithm to perform a more efficient hyperparameter selection, and furthermore can leverage the best values found in the previous step (*) as input parameterization ('best params'). We expected that this allowed us to improve a bit more loss and accuracy. Check script [here](scripts/training/main_tune_ASHA+HYPEROPT.ipynb).
+
+Tuning was run for 50 trials as well. Best trials are shown below:
+
+![Hyperparameter tuning best results](/images/tuning_results.png)
+
+So, the **best final values** found for hyperparameters were:
+
+| Parameter         | Final best value |
+| :---------------: | :--------------: |
+| Learning Rate     | 0.000178044      |
+| Batch Size        | 64               |
+| Hidden Layer size | 1024             | 
+
+obtaining
+- Best trial final validation loss: 0.68718
+- Best trial final validation accuracy: 0.742241
+
+improving the previous best results but minimally (less than 2%).
+
+We did finally a test using SGD optimizer but we obtained worst values.
+
+---
+
+Afterwards, a similar test was done with **Flow features**, showing a similar performance than for the RGB features, so we kept the same values obtained for RGB videos.
+
+Unfortunately, we couldn't do the trials with the two-stream model since while running Ray Tune we discovered that a maximum 512MB filesize applied for total loaded pickle files during trial initialization, making it impossible to test it.
 
 
-#### DROPOUT
+### DROPOUT
 
 Due to the size of our dataset, the model overfitted rapidly if no dropout was applied. We found out that dropout values ranging from 0.5 to 0.8 enabled the model to learn further. Precisely, the final model obtained used dropout layers of 0.5 in both network streams.
 
@@ -415,8 +545,8 @@ As said above, these Python scripts use Jupyter notebook format and are as follo
 | [dataset.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/dataset.ipynb)                                                                       |_Contains dataset class. Used by main*_                                                                                                         |
 | [models.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/models.ipynb)                                                                         |_Contains models class. Used by main*_                                                                                                          |
 | [main.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main.ipynb)                                                                             |Basic training (one stream, first & second approaches)                                                                                                                    |
-| [main_tune.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_tune.ipynb)                                                                   |Hyperparameter tuning with ray.Tune (one stream, first & second approaches)                                                                                               |
-| [main_tune_ASHA.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_tune_ASHA.ipynb)                                                         |Hyperparameter tuning with ray.Tune and ASHA scheduler (one stream, first & second approaches)                                                                            |
+| [main_tune_ASHA.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_tune.ipynb)                                                                   |Hyperparameter tuning with ray.Tune and ASHA scheduler (one stream, first & second approaches)                                                                                               |
+| [main_tune_ASHA+HYPEROPT.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_tune_ASHA.ipynb)                                                         |Hyperparameter tuning with ray.Tune, ASHA scheduler and HyperOptSearch (one stream, first & second approaches)                                                                            |
 | [main_two_stream.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream.ipynb)                                                       |Basic training (two-stream, third approach)                                                                                                                    |
 | [main_two_stream_OneCycleLR.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR.ipynb)                                 |Training with OneCycleLR scheduler (two-stream, third approach)                                                                                                |
 | [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) |Training with OneCycleLR scheduler (two-stream, third approach), saves best accuracy model parameters. **Final model parameters are extracted with this code** |
