@@ -1,0 +1,3 @@
+[submodule "video_capture"]
+	path = video_capture
+	url = https://github.com/gesturesAidl/video_capture.git
