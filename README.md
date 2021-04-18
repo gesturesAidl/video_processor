@@ -685,5 +685,5 @@ Now, the video processor app will be running as a process in your terminal and t
 
  ### HOW TO RUN THE PROGRAM - video_capture
 
-> Please, refere to the [video_capture](https://github.com/gesturesAidl/video_capture) repository [README](https://github.com/gesturesAidl/video_capture/blob/main/README.md) in order to get the instructions to run the client app. 
+> Please, refer to the [video_capture](https://github.com/gesturesAidl/video_capture) repository [README](https://github.com/gesturesAidl/video_capture/blob/main/README.md) in order to get the instructions to run the client app. 
    
