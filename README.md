@@ -3,22 +3,11 @@ Final project for the 2020-2021 Postgraduate course on Artificial Intelligence w
 
 Advised by **Amanda Duarte**.
 
-## TABLE OF CONTENTS
-[INTRODUCTION AND MOTIVATION](#introduction-and-motivation)
+Table of Contents
+=================
 
-[DATASET](#dataset)
-
-[ARCHITECTURE AND RESULTS](#architecture-and-results)
-
-[ABLATION STUDIES](#ablation-studies)
-
-[END TO END SYSTEM](#end-to-end-system)
-
-[HOW TO RUN THE TRAINING](#how-to-run-the-training)
-
-[HOW TO RUN THE PROGRAM](#how-to-run-the-program)
-
-
+---
+---
 
 ## INTRODUCTION AND MOTIVATION
 
@@ -64,7 +53,7 @@ To better understand the model’s architecture, the general pipeline should be 
 It must be noted that the decision of using RGB and Optical Flow videos was made after [different attempts](#model-improvements) to improve the model.
 
 
-### Optical Flow:
+### Optical Flow
 We computed the dense Optical Flow with the Farneback’s algorithm implementation of OpenCV. As the videos of the dataset have a low resolution and experience a lot of lightning changes, the Optical Flow results showed some imperfections, which we tried to solve by [different approaches](#optical-flow-improvements). Unfortunately, we could not find how to correct them, and decided to move on with the Optical Flow we had in order to be able to continue advancing with the project.
 
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/rgb_flow.gif?raw=true)
@@ -125,7 +114,7 @@ The first way we explored to address the classification task was using only the 
 
 ![One-stream classifier NN](/images/1s_nn.png)
 
-The first training tests showed that the model overfitted quickly after a few epochs, therefore we added a dropout layer to improve the results.
+The first training tests showed that the model overfitted quickly after a few epochs, therefore we added a dropout layer as it enabled the model to learn further.
 
 Next, we performed some [basic trainings](scripts/training/main.ipynb), changing the value of hyperparameters to see how the model performed. As we had already chosen the activation function (ReLu) and the Loss function (Cross-Entropy Loss), the remainder hyperparameters to be defined were:
  - Learning rate
@@ -310,11 +299,6 @@ Afterwards, a similar test was done with **Flow features**, showing a similar pe
 Unfortunately, we couldn't do the trials with the two-stream model since while running Ray Tune we discovered that a maximum 512MB filesize applied for total loaded pickle files during trial initialization, making it impossible to test it.
 
 
-### DROPOUT
-
-Due to the size of our dataset, the model overfitted rapidly if no dropout was applied. We found out that dropout values ranging from 0.5 to 0.8 enabled the model to learn further. Precisely, the final model obtained used dropout layers of 0.5 in both network streams.
-
-
 ### DATA AUGMENTATION
 
 We tried to further increase the accuracy by performing some data augmentation on training data. 
@@ -443,11 +427,11 @@ When the response message is received, if the probability value exceeds a certai
 
 A full demo of all gestures with the corresponding Linux actions can be seen [here](https://www.youtube.com/watch?v=G59jl27JF2A).
 
-# HOW TO
+## HOW TO
     
-## HOW TO PREPARE THE DATASET FROM SCRATCH
+### HOW TO PREPARE THE DATASET FROM SCRATCH
 
-##### Download Jester Dataset
+#### Download Jester Dataset
 In order to download the Jester Dataset, go to its [official web page](https://20bn.com/datasets/jester) and then go to [download section](https://20bn.com/datasets/download). 
 
 > Notice that it is required to create an account in order to be able to download the dataset. 
@@ -467,7 +451,7 @@ Create a new folder in your computer with name `csvs` and download the following
     
 Now you have the entire dataset ready and we need to clean it in order to get rid of the classes that are out of the scope of this project (Remember, we are only going to keep and train **9** classes of the 27 the dataset provides).
 
-##### Clean dataset
+#### Clean dataset
 
 CLEAN VIDEOS 
 
@@ -483,14 +467,14 @@ CLEAN CSVS
 
 Delete all rows of the downloaded csvs to keep only the useful ones. We will use the file [delete_unuseful_classes_csvs.py](scripts/preprocessing/delete_unuseful_classes_csvs.py). To do so, replace the `path_to_csvs_folder` variable with the absolute path to your downloaded `csvs` folder. This script will create a new folder at the same folder level with name `clean_csvs` with the csv files filtered in order to only keep the labels of the useful classes. 
 
-##### Convert video frames to video format
+#### Convert video frames to video format
 At that point, we have a bunch of folders with `.jpg` frames inside it. In order to perform all other actions (extract optical flow and extract features), we need to have them all in a video format.  To do so, we will use the following script:  [frame2video.py](scripts/preprocessing/frame2video.py). We have to indicate the folder where the dataset is stored in `abs_path_to_dataset` variable  and run the script.  THis script  will create a new folder in the same directory called `videos` with the same structure than the `20bn-jester-v1` one. But inside each subfolder named with a number, it will contain a single file with extension  `.mp4` which is the video file that has merged the video gesture frames.
 
 
-## HOW TO EXTRACT OPTICAL FLOW
+### HOW TO EXTRACT OPTICAL FLOW
 In order to get the apparent motion estimation of the objects  we compute the optical flow of every video, and get a new one with its optical flow vectors of the moving objects during the video sequence. To do so, we will use the following script: [optical_flow.py](scripts/preprocessing/optical_flow.py). We need to set the `abs_path_to_videos_folder` variable with the absolute path to our `videos` folder, and `abs_path_to_folder_out`  variable, with the path to the directory where we want to store the optical flow videos. 
 
-## HOW TO EXTRACT FEATURES FROM VIDEOS
+### HOW TO EXTRACT FEATURES FROM VIDEOS
 > Notice: It is the same procedure to extracte the features from the raw videos than for the optical flow videos. In this example we explain how to do it with the raw videos.
 
 STEP1: 
@@ -513,7 +497,7 @@ ___
 > Repeat this procedure with your optical flow videos in order to extract the optical flow features. 
 
 
-## HOW TO TRAIN THE MODEL
+### HOW TO TRAIN THE MODEL
 
 #### Setting the environment in Google Drive
 
@@ -551,9 +535,9 @@ As said above, these Python scripts use Jupyter notebook format and are as follo
 | [main_two_stream_OneCycleLR.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR.ipynb)                                 |Training with OneCycleLR scheduler (two-stream, third approach)                                                                                                |
 | [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) |Training with OneCycleLR scheduler (two-stream, third approach), saves best accuracy model parameters. **Final model parameters are extracted with this code** |
 
-## HOW TO RUN THE PROGRAM - video_processor 
+### HOW TO RUN THE PROGRAM - video_processor 
 
-### Installation
+#### Installation
 
 Before continuing, make sure you have Python installed and available from your command line.
 You can check this by simply running:
@@ -566,21 +550,21 @@ $ python --version
 Your output should look similar to:  ```3.8.2.```
 If you do not have Python, please install the latest 3.8 version from python.org.
 
-#### Install Docker
+##### Install Docker
 Make sure you have docker installed in your computer by typing: 
 ```bash
 $ docker -v
 ```
 If installed, you should get an output similar to: `Docker version 20.10.3`. If you do not have Docker, install the latest version from its official site: https://docs.docker.com/get-docker/
 
-#### Install docker-compose
+##### Install docker-compose
 Make sure you have docker-compose installed in your computer by typing: 
 ```bash
 $ docker-compose -v
 ```
 If installed, you should get an output similar to: `docker-compose version 1.27.4`. If you do not have docker-compose, install the latest version from its official site: https://docs.docker.com/compose/install/
 
-#### Install Miniconda
+##### Install Miniconda
 
 To test your installation, in your terminal window or Anaconda Prompt, run the command: 
 ```bash
@@ -588,7 +572,7 @@ $ conda list
 ```
 And you should obtain the list of packages installed in your base environment.
 
-#### Create your Miniconda environment
+##### Create your Miniconda environment
 
 >  Notice: This repository has been designed in order to allow being executed with two different environments. If you have a GPU in your computer, make use of the file "environment_gpu.yml" during the next section, in case you only have CPU, use the file "environment.yml" to prepare your environment.
 
@@ -606,7 +590,7 @@ Once your environment had been created, activate it by typing:
 $ conda activate videoprocgpu
 ```
 
-#### Create your .env file
+##### Create your .env file
 Create a folder with name `/env` inside the video_processor root directory folder and then, create a `.env` file inside it.
 Copy the following code to your `.env` file:
 
@@ -627,8 +611,8 @@ Replace the dots in your `.env` file with the following information:
 * MODEL_DIR: Absolute path to the `./models` folder. By default this directory is placed at the root of this repository.
 * GPU: This field should be set to `True` in case you are using one GPU and `False` in case you are not.
 
-### RUN the project
-##### RabbitMQ
+##### RUN the project
+###### RabbitMQ
 Activate the project service dependencies by starting a rabbitmq container. Go to the `/deployment` folder and edit the `docker-compose.yml` file in order to add your user and password credentials. 
 * ${RABBIT_USER}: Replace by your rabbit default  user name.
 * ${RABBIT_PW}: Replace by your rabbit default password. 
@@ -639,7 +623,7 @@ When your credentials had been set, from the same directory type:
 $ docker-compose up rabbitmq
 ```
 
-##### Video processor app
+###### Video processor app
 Finally, to start the video_processor `app`, place yourself in the repository root dir and type: 
 ```bash
 $ python3 app/app.py
@@ -649,7 +633,7 @@ Now, the video processor app will be running as a process in your terminal and t
     [X] Start Consuming:
 
 
- ## HOW TO RUN THE PROGRAM - video_capture
+ ### HOW TO RUN THE PROGRAM - video_capture
 
 > Please, refere to the [video_capture](https://github.com/gesturesAidl/video_capture) repository [README](https://github.com/gesturesAidl/video_capture/blob/main/README.md) in order to get the instructions to run the client app. 
    
