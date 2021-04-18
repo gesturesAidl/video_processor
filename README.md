@@ -279,9 +279,22 @@ As stated in the introduction, our project goal was not only to train a working 
 
 *Note that the classes No Gesture and Doing Other Things are obviously not mapped to any action.*
 
-Briefly, the way the whole system works is as follows: videos are captured in our computer, sent to the Cloud where they are processed and classified, and then a response is returned and the computer performs the action contained on it. To manage the message sending in between the two machines, we used the message broker [RabbitMQ](https://www.rabbitmq.com/).
+### PLATFORM ARCHITECTURE
 
-![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/webcam.jpg?raw=true)
+As we have commented, this project is made up of two different modules, which work in consonance using the client-server paradigm.
+   1. video_processor (This module)
+   2. [video_capture](https://github.com/gesturesAidl/video_capture). Added as a submodule in this repository.
+
+In this way, the tasks are shared between the resource provider or server (video_processor) and the client (video_capture), which makes requests to the server and waits for its response to decide what action to take.
+
+This architecture allows that, if a user does not have GPU resources on their local computer, they can deploy the server (video_processor) on another platform or resource provider (in our case we have used a GCP GPU), and the client application (video_capture) in charge of using the computer camera to record the videos on the local computer.
+
+Thus, the way the whole system works is as follows: videos are captured in our computer, sent to the Cloud where they are processed and classified, and then a response is returned and the computer performs the action contained on it. 
+
+To manage the messages sent between server and client, we use Remote Procedure Calls (RPC) which is a protocol that a computer uses to execute code on another remote machine without having to worry about communications between both of them. This is handled by the open source AMQP message Broker [RabbitMQ](https://www.rabbitmq.com/).
+
+The following image shows all the modules of the complete project and how the management of the messages is done by the broker. 
+![alt text](images/webcam.png)
 
 #### VIDEO CAPTURING
 
@@ -408,7 +421,7 @@ As said above, these Python scripts use Jupyter notebook format and are as follo
 | [main_two_stream_OneCycleLR.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR.ipynb)                                 |Training with OneCycleLR scheduler (two-stream, third approach)                                                                                                |
 | [main_two_stream_OneCycleLR_save_best_model.ipynb](https://github.com/gesturesAidl/video_processor/blob/main/scripts/training/main_two_stream_OneCycleLR_save_best_model.ipynb) |Training with OneCycleLR scheduler (two-stream, third approach), saves best accuracy model parameters. **Final model parameters are extracted with this code** |
 
-## HOW TO RUN THE PROGRAM
+## HOW TO RUN THE PROGRAM - video_processor 
 
 ### Installation
 
@@ -505,4 +518,8 @@ Now, the video processor app will be running as a process in your terminal and t
 
     [X] Start Consuming:
 
-    
+
+ ## HOW TO RUN THE PROGRAM - video_capture
+
+> Please, refere to the [video_capture](https://github.com/gesturesAidl/video_capture) repository [README](https://github.com/gesturesAidl/video_capture/blob/main/README.md) in order to get the instructions to run the client app. 
+   
