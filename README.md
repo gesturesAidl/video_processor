@@ -19,7 +19,7 @@ Advised by **Amanda Duarte**.
 [HOW TO RUN THE PROGRAM](#how-to-run-the-program)
 
 
-
+[[toc]]
 
 ## INTRODUCTION AND MOTIVATION
 
