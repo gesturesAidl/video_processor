@@ -225,7 +225,7 @@ Our first attempt wasn't successful, as the combination of Adam + OneCycleLR sho
 
 ![Two stream OneCycleLR Adam results](images/two_stream_trial9_Adam.png)
 
-Then we switched back to SGD optimizer expecting that it was more compatible with OneCycleLR scheduler, supposition that turned to be right. These are the loss and accuracy graphs obtained with a dropout value of 0.5 (using this [Colab notebook](scripts/training/main_two_stream_OneCycleLR)):
+Then we switched back to SGD optimizer expecting that it was more compatible with OneCycleLR scheduler, supposition that turned to be right. These are the loss and accuracy graphs obtained with a dropout value of 0.5 (using this [Colab notebook](scripts/training/main_two_stream_OneCycleLR.ipynb)):
 
   ![Two stream results](images/two_stream_trial11_best_model.png)
 
