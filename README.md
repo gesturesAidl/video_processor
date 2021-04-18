@@ -74,7 +74,11 @@ We computed the dense Optical Flow with the Farneback’s algorithm implementati
 In order to extract features from the videos (both RGB and Optical Flow) we used an Inflated 3D Network (I3D), as it is a widely used network for video classification, able to learn spatiotemporal information from the videos. In our case, the chosen I3D had weight initialization from a ResNet50 network trained on Imagenet, and was also pre-trained on the action recognition dataset Kinetics-400, since it’s an state-of-the-art model with a good balance between accuracy and computational requirements. The model is provided by [GluonCV](https://cv.gluon.ai/) and runs on MXnet.
 
 ### Classifier Neural Network
-The RGB and the Optical Flow videos are processed by the previously mentioned I3D network, and features for both of them are obtained and go through a [neural network architecture with two streams](https://github.com/gesturesAidl/video_processor/blob/main/app/GesturesAnalyzer/Classifier2stream.py), which was designed considering the [different options](#feature-joinig) of how to combine the features. Briefly, both features go through their respective branches of the neural network and the output logits are added up, go through a LogSoftMax layer whose output are the final probabilities. This network was trained and [hyperparameter-tuned](#hyperparameter-tuning) to yield the final results: 
+The RGB and the Optical Flow videos are processed by the previously mentioned I3D network, and features for both of them are obtained and go through a [neural network architecture with two streams](https://github.com/gesturesAidl/video_processor/blob/main/app/GesturesAnalyzer/Classifier2stream.py), which was designed considering the [different options](#feature-joinig) of how to combine the features. Briefly, both features go through their respective branches of the neural network and the output logits are added up, go through a LogSoftMax layer whose output are the final probabilities.
+
+![NN](images/nn.png)
+
+This network was trained and [hyperparameter-tuned](#hyperparameter-tuning) to yield the final results: 
 
 :bangbang: PLOT OF THE BEST RESULTS
 
