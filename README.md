@@ -307,9 +307,9 @@ The range of values tuned for each hyperparameter was as follows:
 
 #### ASHA scheduler
 
-As scheduler we chose [ASHA](https://docs.ray.io/en/master/tune/api_docs/schedulers.html#tune-scheduler-hyperband) (Asynchronous HyperBand Scheduler), since this implementation provides better parallelism and avoids straggler issues during eliminations compared to the original version of HyperBand. We wanted to leverage its ability to perform *early stopping* (stop automatically bad trials), although at the end we didn't manage to make it work. Check code [here](scripts/training/main_tune_ASHA.ipynb).
+As scheduler we chose [ASHA](https://docs.ray.io/en/master/tune/api_docs/schedulers.html#tune-scheduler-hyperband) (Asynchronous HyperBand Scheduler), since this implementation provides better parallelism and avoids straggler issues during eliminations compared to the original version of HyperBand. We wanted to leverage its ability to perform *early stopping* (stop automatically bad trials), although at the end we didn't manage to make it work.
 
-First of all, we ran it only with **RGB videos** (first approach) with 50 samples (number of trials), with Adam optimizer and a dropout = 0.5 and 20 epochs as fixed values. The best values (*) found were:
+First of all, we ran it only with **RGB videos** (first approach) with 50 samples (number of trials), with Adam optimizer and a dropout = 0.5 and 20 epochs as fixed values. Check Colab notebook [here](scripts/training/main_tune_ASHA.ipynb). The best values (*) found were:
  - 'lr': 0.00023202085501207852
  - 'batch_size': 64,
  - 'hidden_size': 1024
@@ -320,7 +320,7 @@ obtaining
 
 #### ASHA scheduler + HyperOptSearch
 
-The last step to optimize results was changing from default Ray Tune search algorithm (random and grid search) to [HyperOptSearch](https://docs.ray.io/en/master/tune/api_docs/suggestion.html#tune-hyperopt). This algorithm uses the Tree-structured Parzen Estimators algorithm to perform a more efficient hyperparameter selection, and furthermore can leverage the best values found in the previous step (*) as input parameterization ('best params'). We expected that this allowed us to improve a bit more loss and accuracy. Check script [here](scripts/training/main_tune_ASHA+HYPEROPT.ipynb).
+The last step to optimize results was changing from default Ray Tune search algorithm (random and grid search) to [HyperOptSearch](https://docs.ray.io/en/master/tune/api_docs/suggestion.html#tune-hyperopt). This algorithm uses the Tree-structured Parzen Estimators algorithm to perform a more efficient hyperparameter selection, and furthermore can leverage the best values found in the previous step (*) as input parameterization ('best params'). We expected that this allowed us to improve a bit more loss and accuracy. See Colab notebook [here](scripts/training/main_tune_ASHA+HYPEROPT.ipynb).
 
 Tuning was run for 50 trials as well. Best trials are shown below:
 
