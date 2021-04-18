@@ -209,14 +209,14 @@ In the first two-stream training tests we continued using Adam optimizer and got
 
 As it can be observed on the figure, our hypothesis was true and the network managed to learn appropriately from the two streams of data and improved the overall accuracy, which went from 70% of the RGB videos and 57% of the Optical Flow ones up to +80%, a significant increase.
 
-##### Increasing dropout
+#### Increasing dropout
 
 Then, we tried to explore by increasing dropout value making thus possible to increase the number of epochs likewise. An execution example can be seen below, with dropout = 0.75 and 100 epochs:
 
   ![Two stream dropout 0.75 results](images/two_stream_trial6.png)
 Taking a look at validation loss' values it can be seen that overfitting occurs for epoch > 70.
 
-##### Adding a scheduler
+#### Adding a scheduler
 
 At this point we wanted to explore if we could improve a bit more the training by using an scheduler, and we chose [OneCycleLR](https://pytorch.org/docs/stable/optim.html?highlight=onecyclelr#torch.optim.lr_scheduler.OneCycleLR), since it uses a interesting learning rate policy (going from an initial learning rate to some maximum learning rate and then from that maximum learning rate to some minimum learning rate much lower than the initial learning rate).
 
@@ -232,7 +232,7 @@ Zooming the graph to detect overfitting showed than overfitting began approximat
 
   ![Two stream results](images/two_stream_trial11_best_model_zoom.png)
 
-##### Final results
+#### Final results
 
 In summary, the best model we found achieved a 83.11% accuracy and was obtained using **SGD optimizer**, **OneCycleLR scheduler** and the following hyperparameters:
 
