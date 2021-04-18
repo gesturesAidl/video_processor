@@ -391,7 +391,8 @@ In the first trial we applied a 15% zoom in the images, followed by random contr
 
 The results are as follows:
 ![Loss and accuracy for augmentation trial I](images/augm_trial1.png)
-As can be seen, overfitting occurs from epoch 48 approx. There isn’t any improvement due to data augmentation since validation loss is lower than the best values obtained :bangbang: previously :bangbang:, besides the fact that validation accuracy doesn't even reach 0.8.
+
+As can be seen, overfitting occurs from epoch 48 approx. There isn’t any improvement due to data augmentation since validation loss is lower than the best values obtained previously, besides the fact that validation accuracy doesn't even reach 0.8.
 
 ---
 
@@ -400,6 +401,7 @@ As can be seen, overfitting occurs from epoch 48 approx. There isn’t any impro
 As the first trial didn't improve the previous results, in the second one we tried another kind of transformations. We applied a 20% random translation in both directions in the images (the same for all the frames inside of a video).
 
 ![Loss and accuracy for augmentation trial II](images/augm_trial2.png)
+
 Results are way better than those in previous trial. If we take a closer look at validation values:
 ![Trial II zoom](images/augm_trial2_zoom.png)
 
