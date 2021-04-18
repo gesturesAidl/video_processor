@@ -338,9 +338,9 @@ obtaining
 - Best trial final validation loss: 0.68718
 - Best trial final validation accuracy: 0.742241
 
-improving the previous best results but minimally (less than 2%).
+improving minimally (less than 2%) the previous results obtained with only ASHA scheduler.
 
-We did finally a test using SGD optimizer but we obtained worst values.
+We did finally a test using SGD optimizer but worst values were obtained.
 
 ---
 
