@@ -214,6 +214,7 @@ As it can be observed on the figure, our hypothesis was true and the network man
 Then, we tried to explore by increasing dropout value making thus possible to increase the number of epochs likewise. An execution example can be seen below, with dropout = 0.75 and 100 epochs:
 
   ![Two stream dropout 0.75 results](images/two_stream_trial6.png)
+
 Taking a look at validation loss' values it can be seen that overfitting occurs for epoch > 70.
 
 #### Adding a scheduler
