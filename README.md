@@ -283,7 +283,7 @@ As stated in the introduction, our project goal was not only to train a working 
 
 As we have commented, this project is made up of two different modules, which work in consonance using the client-server paradigm.
    1. video_processor (This module)
-   2. [video_capture](video_capture). Added as a submodule in this repository.
+   2. [video_capture](https://github.com/gesturesAidl/video_capture). Added as a submodule in this repository.
 
 In this way, the tasks are shared between the resource provider or server (video_processor) and the client (video_capture), which makes requests to the server and waits for its response to decide what action to take.
 
@@ -521,5 +521,5 @@ Now, the video processor app will be running as a process in your terminal and t
 
  ## HOW TO RUN THE PROGRAM - video_capture
 
-> Please, refere to the [video_capture](video_capture) repository [README](video_capture/README.md) in order to get the instructions to run the client app. 
+> Please, refere to the [video_capture](https://github.com/gesturesAidl/video_capture) repository [README](https://github.com/gesturesAidl/video_capture/blob/main/README.md) in order to get the instructions to run the client app. 
    
