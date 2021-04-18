@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ‼️11:45‼️ 🕐
+# DEVICE CONTROL WITH GESTURES ‼️12:45‼️ 🕐
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -71,14 +71,29 @@ We computed the dense Optical Flow with the Farneback’s algorithm implementati
 ![alt text](https://github.com/gesturesAidl/video_processor/blob/main/images/rgb_flow.gif?raw=true)
 
 ### I3D
-In order to extract features from the videos (both RGB and Optical Flow) we used an Inflated 3D Network (I3D), as it is a widely used network for video classification, able to learn spatiotemporal information from the videos. In our case, the chosen I3D had weight initialization from a ResNet50 network trained on Imagenet, and was also pre-trained on the action recognition dataset Kinetics-400, since it’s an state-of-the-art model with a good balance between accuracy and computational requirements. The model is provided by [GluonCV](https://cv.gluon.ai/) and runs on MXnet.
+In order to extract features from the videos (both RGB and Optical Flow) we used an Inflated 3D Network (I3D), as it is a widely used network for video classification, able to learn spatiotemporal information from the videos. In our case, we have chosen the *i3d_resnet50_v1_kinetics400* provided by [GluonCV](https://cv.gluon.ai/model_zoo/action_recognition.html#kinetics400-dataset), since it’s an state-of-the-art model with a good balance between accuracy and computational requirements. 
+
+The ResNet50 architecture is shown below:
+
+![ResNet50 architecture](/images/ResNet50_hor.png)
+
+
+This I3D had weight initialization from a ResNet50 network trained on Imagenet, and afterwards pre-trained on the action recognition dataset Kinetics-400. The model runs on MXnet DL framework.
+
+Each video (RGB and Optical Flow) is fed through this feature extractor obtaining a (1, 2048) tensor as output, which is saved as a numpy file.
+
 
 ### Classifier Neural Network
-The RGB and the Optical Flow videos are processed by the previously mentioned I3D network, and features for both of them are obtained and go through a [neural network architecture with two streams](https://github.com/gesturesAidl/video_processor/blob/main/app/GesturesAnalyzer/Classifier2stream.py), which was designed considering the [different options](#feature-joinig) of how to combine the features. Briefly, both features go through their respective branches of the neural network and the output logits are added up, go through a LogSoftMax layer whose output are the final probabilities. This network was trained and [hyperparameter-tuned](#hyperparameter-tuning) to yield the final results: 
+The RGB and the Optical Flow videos are processed by the previously mentioned I3D network, and features for both of them are obtained and go through a [neural network architecture with two streams](https://github.com/gesturesAidl/video_processor/blob/main/app/GesturesAnalyzer/Classifier2stream.py), which was designed considering the [different options](#feature-joining) of how to combine the features. Briefly, both features go through their respective branches of the neural network and the output logits are added up and go through a LogSoftMax layer whose output are the final probabilities. Each branch is made of two fully connected layers with a ReLu activation in between, plus a dropout layer. As loss function we selected Cross-Entropy Loss (that incorporates the final LogSoftMax layer). 
 
-:bangbang: PLOT OF THE BEST RESULTS
+![NN](images/nn.png)
 
-This model saved and used on the final gesture recognition task.
+This network was trained and [hyperparameter-tuned](#hyperparameter-tuning) to yield the final results, whose confusion matrix and accuracy per class are shown below: 
+
+![Confusion matrix and accuracy per class of the final model](/images/confusion_acc_model_dict.png)
+
+This model was [saved](models/model_state_dict.pt) and used on the final gesture recognition task.
+
 
 ## ABLATION STUDIES
 
