@@ -156,8 +156,8 @@ After some training and hyperparameter tuning, the obtained accuracy was around 
 
 ![RGB one-stream graphs](images/rgb.png)
 
-	 · Learning rate = 1e-3				· Dropout = 0.5
-	 · Batch size = 32					· Number of epochs = 25
+	 · Learning rate = 1e-3			· Dropout = 0.5
+	 · Batch size = 32			· Number of epochs = 25
 	 · Number of hidden layers = 512	· Optimizer: Adam
 
 To address that problem, we thought that we could capture better the temporal and directional information by computing the Optical Flow of the videos and extract features from them.
@@ -169,8 +169,8 @@ After training the model with only the Optical Flow features (following the same
 
  ![Flow one-stream graphs](images/flow.png)
 
-	 · Learning rate = 3e-4				· Dropout = 0.5
-	 · Batch size = 128					· Number of epochs = 25
+	 · Learning rate = 3e-4			· Dropout = 0.5
+	 · Batch size = 128			· Number of epochs = 25
 	 · Number of hidden layers = 2048	· Optimizer: Adam
 
 ***Note** : For this training it was used the same [Colab notebook](scripts/training/main.ipynb) than for the first approach, the only change that must be done is loading Flow features pickle file instead of RGB one.* 
