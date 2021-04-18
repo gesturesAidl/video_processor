@@ -1,4 +1,4 @@
-# DEVICE CONTROL WITH GESTURES ‼️10:42‼️ 🕐
+# DEVICE CONTROL WITH GESTURES ‼️11:45‼️ 🕐
 Final project for the 2020-2021 Postgraduate course on Artificial Intelligence with Deep Learning, UPC School, authored by **Enrique González Terceño**, **Sofia Limon**, **Gerard Pons** and **Celia Santos**. 
 
 Advised by **Amanda Duarte**.
@@ -354,6 +354,7 @@ ___
 
 > Repeat this procedure with your optical flow videos in order to extract the optical flow features. 
 
+
 ## HOW TO TRAIN THE MODEL
 
 #### Setting the environment in Google Drive
@@ -362,12 +363,12 @@ The training was done mainly in Google Colab since it provides a convenient acce
 
 The training code needs access to some files that are located in a Google Drive's folder and are copied to Colab filesystem for the sake of improving access time to data.
 
-So it's necessary to recreate the following folder tree **in your own** Google Drive's root folder in order to you can execute the Jupyter notebooks scripts:
+So it's necessary to create the following folder tree **in your own** Google Drive's root folder in order to you can execute the Jupyter notebooks scripts:
 
 ![Google Drive's tree](images/gdrive_tree.png)
 
- - Colab Notebooks: copy the notebooks from repository's **/scripts/training** folder. You can paste them directly in this folder or, if you don't want to make a mess with existing notebooks, you can copy the entire folder inside Colab Notebooks or just paste them in another place in Google Drive, it doesn't matter.
- - jester_dataset: download from [here](https://drive.google.com/drive/folders/1T6eHjss8IHV7yr_Z277kyP2_trtpFP2i?usp=sharing)  and paste the directory in your Google Drive's root folder for the scripts to work.
+ - Colab Notebooks: copy the notebooks in **scripts/training** folder from the repository and paste them in the  **training** folder under your Colab Notebooks folder.
+ - jester_dataset: download from [here](https://drive.google.com/drive/folders/1T6eHjss8IHV7yr_Z277kyP2_trtpFP2i?usp=sharing)  and upload the contents under your Google Drive's **jester_dataset** folder according to the directory structure shown above.
    * **csv** folder: contains the csv files with labels, and labeled training and validation data
    * **features** folder: contains the RGB and flow features (extracted using the Gluon pre-trained model from the videos made from Jester Dataset) as pickle files
 
