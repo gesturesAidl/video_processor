@@ -51,7 +51,7 @@ As the goal of our project was to control basic functionalities of a computer, w
 The first two classes, Doing Other Things and No Gesture, were added to our list of classes in order to have basic states when we are not trying to control the computer.
 
 
-The Jester test set provided is unlabeled, as the purpose of the dataset is to be a competition. Hence, as the end goal of the classifier is to be used with user inputs from a webcam, we decided to perform the test phase with videos created by us on the end to end system.
+The Jester test set provided is unlabeled, as the purpose of the dataset is to be a Challenge. Hence, as the end goal of the classifier is to be used with user inputs from a webcam, we decided to perform the test phase with videos created by us on the end to end system.
 
 
 
@@ -80,7 +80,7 @@ The ResNet50 architecture is shown below:
 
 This I3D had weight initialization from a ResNet50 network trained on Imagenet, and afterwards pre-trained on the action recognition dataset Kinetics-400. The model runs on MXnet DL framework.
 
-Each video (RGB and Optical Flow) is fed through this feature extractor obtaining a (1, 2048) tensor as output, which is saved as a numpy file.
+Each video (RGB and Optical Flow) is fed through this feature extractor obtaining a (1, 2048) tensor as output, which is saved as a numpy file by the feature extractor.
 
 
 ### Classifier Neural Network
