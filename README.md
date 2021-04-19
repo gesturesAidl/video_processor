@@ -560,8 +560,8 @@ For reference purposes only, some processing times are shown:
 	extract_features:     Average time for processing 10 videos (with no GPU @1):  5.0 s approx  (3x compared to *)
 	extract features:     Average time for processing 10 videos (with no GPU @3): 70.0 s approx (44x compared to *)
 
-	@1: GCP aidl-instance-1: n1-standard-16 (16 vCPU, 60 GB mem)
-	@2: GCP aidl-instance-2: n1-standard-4 (4 vCPU, 15 GB mem) + 1 x NVIDIA Tesla K80 GPU
+	@1: GCP n1-standard-16 (16 vCPU, 60 GB mem)
+	@2: GCP n1-standard-4 (4 vCPU, 15 GB mem) + 1 x NVIDIA Tesla K80 GPU
 	@3: local x86 computer (8 CPU, 32 GB mem) + 1 x NVIDIA GeForce RTX 2060 GPU
 
 
