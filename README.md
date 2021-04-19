@@ -154,17 +154,18 @@ The videos in our dataset are of:
 
 For this reason we decided to try and improve the optical flow detection by trying out different techniques. 
 
-#### 1. Image Quantization + noise reduction
+#### Image Quantization + noise reduction
 Motivation: If we reduce the granularity and the amount of colors in the image, there will be more homogeneity, and less variation within the background lighting. 
 Here we applied gaussian filtering to reduce the noise - or to "smooth" the image - and then an image quantization with 8 values following k-means clustering.
 Actual result: There is less difference within a single image, but still a big difference between consecutive frames, meaning that it did not improve the optical flow output. In fact, the output was worse than expected:
 
 ![ezgif com-video-to-gif-13](https://user-images.githubusercontent.com/18445224/115202449-61ba4980-a131-11eb-91fc-56dcb70dc25d.gif)
 ![ezgif com-video-to-gif-14](https://user-images.githubusercontent.com/18445224/115202459-63840d00-a131-11eb-9efd-e57e18c65575.gif)
+
 _(Original optical flow on the left, modified optical flow on the right)_
 
 
-#### 2. Reduce luminosity component
+#### Reduce luminosity component
 Motivation: A big factor in the background noise of the optical flow are the lighting changes. By reducing the luminosity of the image, when calculating the optical flow the background differences won't be so noticeable and the foreground movement will be more prominent. 
 Actual result: On some videos this seemed to work quite well. The moving background, which was our initial main problem, became almost static, and the hand gesture is the only real movement in the image.
 
@@ -178,7 +179,7 @@ However, because of the differences between videos (lighting conditions, uniform
 ![ezgif com-video-to-gif-6](https://user-images.githubusercontent.com/18445224/115198105-aa233880-a12c-11eb-97ab-d1cd5bbcebd7.gif)
 
 
-#### 3. Sparse optical flow
+#### Sparse optical flow
 Motivation: All we really need from the optical flow is a good representation of the direction of the hand movement. So although sparse optical flow is a vector representation, maybe it could work for our task and better than dense optical flow. 
 
 Actual result: It worked very well for a number of videos. See this for example:
@@ -196,14 +197,15 @@ Some videos refused to work at all with this method, due to the fact of no point
 ''Because of the real-time nature of this project, we cannot rely on trial and error''
 If we increased the minimum distance between points, then we wouldn't get an error, but the result for the videos that already worked were not good. 
 
-#### 4. Paper: Apply a mask
-Motivation: Paper "Making Optical Flow Robust to Dynamic Lighting Conditions for Real-Time Operation". The main idea in this paper above is to 1) extract the second derivative, or the laplacian of the image - which finds the edges of an image - then 2) to extract the optical flow from the original image, and finally 3) to isolate the true flow using the laplacian mask created before. 
+#### Paper: Apply a mask
+Motivation: Paper ["Making Optical Flow Robust to Dynamic Lighting Conditions for Real-Time Operation"](https://apps.dtic.mil/dtic/tr/fulltext/u2/1005369.pdf). The main idea in this paper above is to 1) extract the second derivative, or the laplacian of the image - which finds the edges of an image - then 2) to extract the optical flow from the original image, and finally 3) to isolate the true flow using the laplacian mask created before. 
 Following this approach, our last resource was to apply a mask to the optical flow. An explored methd to find a good mask was applying a gaussian filter to smooth the edges, applying the laplacian filter to detect the contours and using image morphology as a post processing method to clean up the mask. 
 Actual result: The expected results were not the desired ones, as we were unable to create a mask without "holes" or missing sections in the regions of interest.
 
 ![ezgif com-video-to-gif-17](https://user-images.githubusercontent.com/18445224/115204642-b1017980-a133-11eb-88a2-efd02e692d70.gif)
 
-In conclusion, we did not apply any of these techniques. The objective was trying to remove background noise and keep the main focus on the hand gesture, but none of the tested methods improved the optical flow rsults.
+#### Conclusions
+In conclusion, we did not apply any of these techniques. The objective was trying to remove background noise and keep the main focus on the hand gesture, but none of the tested methods improved the optical flow results.
 
 ### FEATURE JOINING
 
