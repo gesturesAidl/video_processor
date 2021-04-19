@@ -138,6 +138,72 @@ This model was [saved](models/model_state_dict.pt) and used on the final gesture
 ### OPTICAL FLOW IMPROVEMENTS
 
 :bangbang: 
+Optical flow is the apparent motion of objects within a video. 
+In our first approach to the model, we saw that where it failed the most was with the movement gestures (non static), and that is why we decided to include explore the optical flow as an input to our model. 
+
+Our initial approach was using the Farneback Optical Flow, but as we stated previously, we were not completely satisfied with the result, as there appeared to be a lot of unwanted background "noise". See the following, for example: 
+
+![ezgif com-video-to-gif-15](https://user-images.githubusercontent.com/18445224/115204015-012c0c00-a133-11eb-9e1c-6e2f902aa876.gif)
+![ezgif com-video-to-gif-16](https://user-images.githubusercontent.com/18445224/115204223-36d0f500-a133-11eb-8e66-4bd6e2650edc.gif)
+
+The videos in our dataset are of:
+- Average quality
+- Are a bit grainy
+- Can have sudden lighting changes 
+- Can have a non-homogeneous/moving background
+
+For this reason we decided to try and improve the optical flow detection by trying out different techniques. 
+
+#### 1. Image Quantization + noise reduction
+Motivation: If we reduce the granularity and the amount of colors in the image, there will be more homogeneity, and less variation within the background lighting. 
+Here we applied gaussian filtering to reduce the noise - or to "smooth" the image - and then an image quantization with 8 values following k-means clustering.
+Actual result: There is less difference within a single image, but still a big difference between consecutive frames, meaning that it did not improve the optical flow output. In fact, the output was worse than expected:
+
+![ezgif com-video-to-gif-13](https://user-images.githubusercontent.com/18445224/115202449-61ba4980-a131-11eb-91fc-56dcb70dc25d.gif)
+![ezgif com-video-to-gif-14](https://user-images.githubusercontent.com/18445224/115202459-63840d00-a131-11eb-9efd-e57e18c65575.gif)
+_(Original optical flow on the left, modified optical flow on the right)_
+
+
+#### 2. Reduce luminosity component? 
+Motivation: A big factor in the background noise of the optical flow are the lighting changes. By reducing the luminosity of the image, when calculating the optical flow the background differences won't be so noticeable and the foreground movement will be more prominent. 
+Actual result: On some videos this seemed to work quite well. The moving background, which was our initial main problem, became almost static, and the hand gesture is the only real movement in the image.
+
+![ezgif com-video-to-gif-5](https://user-images.githubusercontent.com/18445224/115198009-911a8780-a12c-11eb-9520-04ee39bfc35d.gif)
+![ezgif com-video-to-gif-7](https://user-images.githubusercontent.com/18445224/115198038-98da2c00-a12c-11eb-829c-d65bbf66393b.gif)
+
+_(Original optical flow on the left, reduced luminosity optical flow on the right)_
+
+However, because of the differences between videos (lighting conditions, uniformity...), the same bitwise operation did not work well for all the videos... sometimes the gesture was not even detected by the optical flow:
+
+![ezgif com-video-to-gif-6](https://user-images.githubusercontent.com/18445224/115198105-aa233880-a12c-11eb-97ab-d1cd5bbcebd7.gif)
+
+
+#### 3. Sparse optical flow
+Motivation: All we really need from the optical flow is a good representation of the direction of the hand movement. So although sparse optical flow is a vector representation, maybe it could work for our task and better than dense optical flow. 
+
+Actual result: It worked very well for a number of videos. See this for example:
+
+![ezgif com-video-to-gif-9](https://user-images.githubusercontent.com/18445224/115199167-e014ec80-a12d-11eb-8d98-8b75214e1447.gif)
+
+But... the algorithm could not be generalized to be applied to all videos. The way sparse optical flow works is that it detects corners within an image, and from that it estimates the movement agains a previous frame.
+
+Using the same parameters as with the previous video, other videos like these ones detected nothing or close to nothing:
+
+![ezgif com-video-to-gif-12](https://user-images.githubusercontent.com/18445224/115201722-9bd71b80-a130-11eb-8e05-d335e12c0680.gif)
+![ezgif com-video-to-gif-11](https://user-images.githubusercontent.com/18445224/115200016-c1fbbc00-a12e-11eb-9506-a58cefc056b0.gif)
+
+Some videos refused to work at all with this method, due to the fact of no points being estimated. Changing the parameters increased the amount of videos that were processed, but reduced the quality of the movement tracking.
+''Because of the real-time nature of this project, we cannot rely on trial and error''
+If we increased the minimum distance between points, then we wouldn't get an error, but the result for the videos that already worked were not good. 
+
+#### 4. Paper: Apply a mask
+Motivation: Paper "Making Optical Flow Robust to Dynamic Lighting Conditions for Real-Time Operation". The main idea in this paper above is to 1) extract the second derivative, or the laplacian of the image - which finds the edges of an image - then 2) to extract the optical flow from the original image, and finally 3) to isolate the true flow using the laplacian mask created before. 
+Following this approach, our last resource was to apply a mask to the optical flow. Tried methods to find a good mask were Edge detection using Canny function, laplacian filter + image morphology. 
+
+![ezgif com-video-to-gif-17](https://user-images.githubusercontent.com/18445224/115204642-b1017980-a133-11eb-88a2-efd02e692d70.gif)
+
+##### 4.1. Edge detection Canny
+
 
 ### FEATURE JOINING
 
