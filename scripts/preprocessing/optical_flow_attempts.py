@@ -101,7 +101,6 @@ if __name__ == '__main__':
     arrayOri = []
     array = []
     video = []
-    videoQ = []
     flowPrev = None
     rgbFlow = None
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
@@ -151,7 +150,6 @@ if __name__ == '__main__':
             elif method == 'quantNoise':
                 img = cv2.GaussianBlur(frame2, (7, 7), 0)
                 img = quantImage(img)
-                videoQ.append(img)
                 frame_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 flow = standardOpFw(prvs, frame_gray)
                 prvs = frame_gray
@@ -189,12 +187,12 @@ if __name__ == '__main__':
         # cv2.waitKey(0)
         height, width, layers = rgbFlow.shape
         # size = (width,height)
-        size = (width*3,height)
+        size = (width*2,height)
 
         out = cv2.VideoWriter(folderOut + "opfw_" + method  + "_" + video_name, fourcc, 12.0, size)
             
         for i in range(len(array)):
-            out.write(np.concatenate((video[i], videoQ[i], array[i]), axis=1))
+            out.write(np.concatenate((video[i], array[i]), axis=1))
         out.release()
 
 
