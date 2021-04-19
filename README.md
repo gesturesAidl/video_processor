@@ -527,7 +527,7 @@ At that point, we have a bunch of folders with `.jpg` frames inside it. In order
 In order to get the apparent motion estimation of the objects  we compute the optical flow of every video, and get a new one with its optical flow vectors of the moving objects during the video sequence. To do so, we will use the following script: [optical_flow.py](scripts/preprocessing/optical_flow.py). We need to set the `abs_path_to_videos_folder` variable with the absolute path to our `videos` folder, and `abs_path_to_folder_out`  variable, with the path to the directory where we want to store the optical flow videos. 
 
 ### HOW TO EXTRACT FEATURES FROM VIDEOS
-> Notice: It is the same procedure to extracte the features from the raw videos than for the optical flow videos. In this example we explain how to do it with the raw videos.
+> Notice: The procedure to extract the features from the raw videos is the same as for the optical flow videos. In this example we explain how to do it with the raw videos.
 
 STEP1: 
 Generate a `videos.txt` file that will contain the list of paths of all videos. To do so, place yourself outside your `videos` folder and run the following command:
@@ -547,6 +547,22 @@ This command will generate a `.npy` file for each video of the `videos` folder i
 ___
 
 > Repeat this procedure with your optical flow videos in order to extract the optical flow features. 
+
+For reference purposes only, some processing times are shown:
+
+	create_video_no_augm: Average time for processing 10 videos (with no GPU @1):  5.0 s approx.
+	optical_flow_no_augm: Average time for processing 10 videos (with no GPU @1):  2.0 s approx.
+	create_video_augm#1:  Average time for processing 10 videos (with GPU @3):     2.0 s approx.
+	create_video_augm#2:  Average time for processing 10 videos (with GPU @3):     0.8 s approx.
+	create_video_augm#3:  Average time for processing 10 videos (with GPU @3):     1.1 s approx.
+	optical_flow_augm:    Average time for processing 10 videos (with GPU @3): 1.4-2.0 s approx.
+	extract_features:     Average time for processing 10 videos (with GPU @3):     1.6 s approx  (*)
+	extract_features:     Average time for processing 10 videos (with no GPU @1):  5.0 s approx  (3x compared to *)
+	extract features:     Average time for processing 10 videos (with no GPU @3): 70.0 s approx (44x compared to *)
+
+	@1: GCP aidl-instance-1: n1-standard-16 (16 vCPU, 60 GB mem)
+	@2: GCP aidl-instance-2: n1-standard-4 (4 vCPU, 15 GB mem) + 1 x NVIDIA Tesla K80 GPU
+	@3: local x86 computer (8 CPU, 32 GB mem) + 1 x NVIDIA GeForce RTX 2060 GPU
 
 
 ### HOW TO TRAIN THE MODEL
