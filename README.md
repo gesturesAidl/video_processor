@@ -137,7 +137,7 @@ This model was [saved](models/model_state_dict.pt) and used on the final gesture
 
 ### OPTICAL FLOW IMPROVEMENTS
 
-:bangbang: 
+
 Optical flow is the apparent motion of objects within a video. 
 In our first approach to the model, we saw that where it failed the most was with the movement gestures (non static), and that is why we decided to include explore the optical flow as an input to our model. 
 
@@ -164,7 +164,7 @@ Actual result: There is less difference within a single image, but still a big d
 _(Original optical flow on the left, modified optical flow on the right)_
 
 
-#### 2. Reduce luminosity component? 
+#### 2. Reduce luminosity component
 Motivation: A big factor in the background noise of the optical flow are the lighting changes. By reducing the luminosity of the image, when calculating the optical flow the background differences won't be so noticeable and the foreground movement will be more prominent. 
 Actual result: On some videos this seemed to work quite well. The moving background, which was our initial main problem, became almost static, and the hand gesture is the only real movement in the image.
 
