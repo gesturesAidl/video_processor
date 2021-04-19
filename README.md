@@ -161,7 +161,7 @@ For this reason we decided to try and improve the optical flow detection by tryi
 
 #### Image Quantization + noise reduction
 Motivation: If we reduce the granularity and the amount of colors in the image, there will be more homogeneity, and less variation within the background lighting. 
-Here we applied gaussian filtering to reduce the noise - or to "smooth" the image - and then an image quantization with 8 values following k-means clustering.
+Here we applied gaussian filtering to reduce the noise - or to "smooth" the image - and then an image quantization with 3 values following k-means clustering.
 Actual result: There is less difference within a single image, but still a big difference between consecutive frames, meaning that it did not improve the optical flow output. In fact, the output was worse than expected:
 
 ![ezgif com-video-to-gif-13](https://user-images.githubusercontent.com/18445224/115202449-61ba4980-a131-11eb-91fc-56dcb70dc25d.gif)
