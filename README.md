@@ -198,12 +198,12 @@ If we increased the minimum distance between points, then we wouldn't get an err
 
 #### 4. Paper: Apply a mask
 Motivation: Paper "Making Optical Flow Robust to Dynamic Lighting Conditions for Real-Time Operation". The main idea in this paper above is to 1) extract the second derivative, or the laplacian of the image - which finds the edges of an image - then 2) to extract the optical flow from the original image, and finally 3) to isolate the true flow using the laplacian mask created before. 
-Following this approach, our last resource was to apply a mask to the optical flow. Tried methods to find a good mask were Edge detection using Canny function, laplacian filter + image morphology. 
+Following this approach, our last resource was to apply a mask to the optical flow. An explored methd to find a good mask was applying a gaussian filter to smooth the edges, applying the laplacian filter to detect the contours and using image morphology as a post processing method to clean up the mask. 
+Actual result: The expected results were not the desired ones, as we were unable to create a mask without "holes" or missing sections in the regions of interest.
 
 ![ezgif com-video-to-gif-17](https://user-images.githubusercontent.com/18445224/115204642-b1017980-a133-11eb-88a2-efd02e692d70.gif)
 
-##### 4.1. Edge detection Canny
-
+In conclusion, we did not apply any of these techniques. The objective was trying to remove background noise and keep the main focus on the hand gesture, but none of the tested methods improved the optical flow rsults.
 
 ### FEATURE JOINING
 
